@@ -1,0 +1,188 @@
+# Proteomorphic - .gitignore
+# Files to exclude from GitHub repository
+
+# ==========================================
+# Documentation Files (Keep Local Only)
+# ==========================================
+# These are project development notes, not needed on GitHub
+
+*_FIX.md
+*_GUIDE.md
+*_STATUS.md
+*_COMPLETE.md
+*_ASSESSMENT.md
+*_VERIFICATION.md
+*_TROUBLESHOOTING.md
+*_PROGRESS.md
+
+# Specific documentation files
+ACCURATE_CRISPR_IMPLEMENTATION.md
+ALPHAFOLD_MAPPING_FIX.md
+ANALYSIS_ACCURACY_VERIFICATION.md
+ANALYSIS_REDIRECT_FIX.md
+ARCHITECTURE_IMAGES_GUIDE.md
+ARCHITECTURE_VISUAL.md
+AUTHENTICATION_GUIDE.md
+BW_DIAGRAMS_GUIDE.md
+CHATBOT_GUIDE.md
+CHATBOT_INTEGRATION.md
+CHATBOT_MANUAL_STEPS.md
+CHATBOT_READY.md
+CHATBOT_SIMPLE.md
+CLINICAL_INTERPRETATION_FIX.md
+COMPLETE_GUIDE.md
+CRITICAL_FIX_PATIENT_ID.md
+DASHBOARD_FIX.md
+DEMO_MODE_OPTIONS.md
+DEPLOYMENT_GUIDE.md
+EMAIL_CONFIRMATION_FIX.md
+ENHANCED_REPORT_GUIDE.md
+EXPLAINING_THE_TECH.md
+FINAL_FIXES_NEEDED.md
+FINAL_SOLUTION.md
+FINAL_STATUS_AND_URL.md
+FIX_INPUT_PAGE.md
+FOLDING_STATUS_FEATURE.md
+GENETIC_VARIANT_EXPLAINED.md
+GOOD_PROTEIN_REPORT_CLEANUP.md
+HEALTH_CHATBOT_GUIDE.md
+HOTSPOTS_FIX_HSP.md
+HSP_FIX.md
+INPUT_FILE_STATUS.md
+INPUT_PAGE_FIXED_COMPLETE.md
+INPUT_PAGE_STATUS.md
+IOT_INPUT_OUTPUT_FLOW.md
+IOT_INTEGRATION.md
+IOT_LINK_COMPLETE.md
+IOT_PATIENT_CONNECTION_GUIDE.md
+IOT_REAL_PURPOSE.md
+IOT_RISK_CALCULATOR_COMPLETE.md
+IOT_SENSOR_EXPLANATION.md
+IOT_USEFUL_CONNECTIONS.md
+LINK_IOT_GUIDE.md
+MUST_USE_SERVER.md
+NCBI_INTEGRATION_GUIDE.md
+NEW_FEATURES.md
+NO_EMAIL_FIX.md
+PATIENT_ID_DATE_FIX.md
+PRION_PROTEIN_FIX.md
+PRIVACY_FIX.md
+PROJECT_ABSTRACT.md
+PROJECT_ABSTRACT_1LINE.md
+PROJECT_ABSTRACT_2LINE.md
+PROJECT_ACCURACY_ASSESSMENT.md
+PROJECT_COMPLETE.md
+PROJECT_CONCLUSION.md
+PROJECT_CONCLUSION_1LINE.md
+PROJECT_DETAILS_1LINE.md
+PROJECT_DETAILS_3LINE.md
+PROJECT_DETAILS_3LINES.md
+PROJECT_DETAILS_PARAGRAPH.md
+PROJECT_ENHANCEMENTS.md
+PROJECT_NAME_IDEAS.md
+PROJECT_RESULTS_1LINE.md
+PROJECT_RESULTS_2LINE.md
+PROJECT_RESULTS_DIAGRAM.html
+PROJECT_STATUS.md
+PROJECT_SUMMARY.md
+PROJECT_UPDATE_2025.md
+PROJECT_UPDATE_NOV22_2025.md
+PROJECT_URLS.md
+PROJECT_USES_AND_VALUE.md
+PROTEIN_INPUT_FLEXIBLE.md
+PROTEIN_INPUT_UPDATED.md
+QUICK_START.md
+QUICK_VSCODE_START.md
+REBRANDING_COMPLETE.md
+REPORT_ACCURACY_ASSESSMENT.md
+REPORT_DYNAMIC_DATA_FIX.md
+REPORT_DYNAMIC_DATA_FIXED.md
+REPORT_FIXED.md
+REPORT_FIXES.md
+REPORT_FULLY_FIXED.md
+REPORT_PAGE_FIXED.md
+REPORT_VALIDATION.md
+SCREENSHOT_GUIDE.md
+SECURITY_FIX.md
+SEE_CHATBOT_NOW.md
+SIGNUP_FIX.md
+SIGNUP_TROUBLESHOOTING.md
+SIMPLE_AUTH_GUIDE.md
+SIMPLE_FIX_GUIDE.md
+SMART_PROTEIN_RECOGNITION.md
+SOCIETAL_IMPACT.md
+STUDENT_PROJECT_REPORT.md
+SUPABASE_PROGRESS.md
+SUPABASE_SETUP.md
+SYSTEM_ARCHITECTURE.md
+SYSTEM_ARCHITECTURE_BW.md
+SYSTEM_ARCHITECTURE_DIAGRAM.html
+TESTING_GUIDE.md
+THERAPEUTIC_INTERVENTIONS_GUIDE.md
+UI_MODERNIZATION.md
+UNIPROT_FEATURE_COMPLETE.md
+UNIPROT_INTEGRATION.md
+VSCODE_IMPLEMENTATION_SUMMARY.md
+VSCODE_SETUP_GUIDE.md
+VSCODE_WORKFLOW.html
+WHERE_TO_GET_VCF_FILES.md
+3D_STRUCTURE_FIX.md
+
+# ==========================================
+# Backup and Test Files
+# ==========================================
+*.backup
+*.corrupted
+*_clean.html
+*_BACKUP_*.html
+*_NEW_*.html
+index_clean.html
+index.html.backup
+index.html.corrupted
+test-*.html
+debug-*.html
+chatbot-test.html
+
+# ==========================================
+# IDE and Editor Files
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ==========================================
+# System Files
+# ==========================================
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# Temporary Files
+# ==========================================
+*.tmp
+*.temp
+*.log
+
+# ==========================================
+# Node Modules (if you add npm later)
+# ==========================================
+node_modules/
+package-lock.json
+
+# ==========================================
+# Environment Files
+# ==========================================
+.env
+.env.local
+.env.production
+
+# ==========================================
+# Build Files (if you add a build process)
+# ==========================================
+dist/
+build/
+*.min.js
+*.min.css

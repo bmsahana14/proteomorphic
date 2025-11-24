@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Confirmed | Proteomorphic</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+
+    <style>
+        .confirmation-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .confirmation-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 30%, hsla(235, 85%, 60%, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, hsla(280, 85%, 60%, 0.15) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .confirmation-box {
+            width: 100%;
+            max-width: 550px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-3xl);
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: var(--spacing-lg);
+            animation: bounce 1s ease-in-out;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .countdown {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--primary);
+            margin: var(--spacing-md) 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar"
+        style="position: absolute; top: 0; left: 0; right: 0; background: transparent; border: none; z-index: 10;">
+        <div class="container navbar-content">
+            <a href="../index.html" class="navbar-logo"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="../logo.png" alt="Proteomorphic" style="height: 32px; width: 32px; object-fit: contain;">
+                <span>Proteomorphic</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="confirmation-container">
+        <div class="confirmation-bg"></div>
+
+        <div class="confirmation-box animate-fade-in">
+            <div class="success-icon">✅</div>
+
+            <h1>Email Verified Successfully!</h1>
+
+            <p class="text-secondary" style="margin: var(--spacing-lg) 0;">
+                Your email address has been confirmed. You can now log in to your Proteomorphic account.
+            </p>
+
+            <div class="alert alert-success" style="margin: var(--spacing-xl) 0;">
+                <strong>🎉 Welcome to Proteomorphic!</strong><br>
+                You now have full access to all platform features.
+            </div>
+
+            <p class="text-tertiary" style="font-size: var(--font-size-sm); margin-bottom: var(--spacing-lg);">
+                Redirecting to login page in <span class="countdown" id="countdown">5</span> seconds...
+            </p>
+
+            <a href="login.html" class="btn btn-primary" style="width: 100%;">
+                Continue to Login
+            </a>
+
+            <p class="text-tertiary" style="margin-top: var(--spacing-lg); font-size: var(--font-size-sm);">
+                Or go to <a href="../index.html" style="color: var(--primary-light);">Homepage</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+
+    <script>
+        // Check if user is now authenticated after email confirmation
+        async function checkAuth() {
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+
+                if (session) {
+                    console.log('User authenticated after email confirmation:', session.user);
+                }
+            } catch (error) {
+                console.error('Auth check error:', error);
+            }
+        }
+
+        // Countdown and redirect
+        let seconds = 5;
+        const countdownEl = document.getElementById('countdown');
+
+        const interval = setInterval(() => {
+            seconds--;
+            countdownEl.textContent = seconds;
+
+            if (seconds <= 0) {
+                clearInterval(interval);
+                window.location.href = 'login.html';
+            }
+        }, 1000);
+
+        // Check auth status
+        checkAuth();
+    </script>
+</body>
+
+</html>

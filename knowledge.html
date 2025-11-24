@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Learn about neurodegenerative diseases, their causes, prevention strategies, and health tips">
+    <title>Knowledge Center | Proteomorphic</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <style>
+        body {
+            padding-top: 80px;
+        }
+
+        .knowledge-hero {
+            padding: var(--spacing-3xl) 0;
+            background: linear-gradient(135deg, rgba(91, 141, 239, 0.1), rgba(168, 85, 247, 0.1));
+            text-align: center;
+        }
+
+        .knowledge-section {
+            padding: var(--spacing-3xl) 0;
+        }
+
+        .knowledge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-2xl);
+        }
+
+        .knowledge-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            transition: all var(--transition-base);
+        }
+
+        .knowledge-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .highlight-card {
+            background: linear-gradient(135deg, rgba(91, 141, 239, 0.1), rgba(168, 85, 247, 0.1));
+            border-color: var(--primary);
+        }
+
+        .knowledge-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .knowledge-card h3 {
+            font-size: var(--font-size-xl);
+            margin-bottom: var(--spacing-md);
+            background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .knowledge-details {
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .knowledge-details h4 {
+            font-size: var(--font-size-md);
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+        }
+
+        .knowledge-details ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .knowledge-details li {
+            padding: var(--spacing-xs) 0;
+            padding-left: var(--spacing-md);
+            position: relative;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .knowledge-details li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .knowledge-details strong {
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .knowledge-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="index.html" class="navbar-logo"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="logo.png" alt="Proteomorphic" style="height: 32px; width: 32px; object-fit: contain;">
+                <span>Proteomorphic</span>
+            </a>
+            <ul class="navbar-menu">
+                <li><a href="index.html" class="navbar-link">Home</a></li>
+                <li><a href="index.html#features" class="navbar-link">Features</a></li>
+                <li><a href="index.html#pipeline" class="navbar-link">Pipeline</a></li>
+                <li><a href="iot-monitoring.html" class="navbar-link">IoT Monitoring</a></li>
+                <li><a href="auth/login.html" class="navbar-link">Sign In</a></li>
+            </ul>
+            <a href="auth/signup.html" class="btn btn-primary btn-sm">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="knowledge-hero">
+        <div class="container">
+            <h1 class="gradient-text">Knowledge Center</h1>
+            <p class="text-secondary" style="font-size: var(--font-size-lg); margin-top: var(--spacing-md);">
+                Understanding neurodegenerative diseases and how to prevent them
+            </p>
+        </div>
+    </section>
+
+    <!-- Knowledge Content -->
+    <section class="knowledge-section">
+        <div class="container">
+            <div class="knowledge-grid">
+                <!-- What Are Neurodegenerative Diseases -->
+                <div class="knowledge-card">
+                    <div class="knowledge-icon">🧠</div>
+                    <h3>What Are Neurodegenerative Diseases?</h3>
+                    <p class="text-secondary">Neurodegenerative diseases are conditions where nerve cells in the brain
+                        or peripheral nervous system progressively lose function and eventually die. This leads to
+                        problems with movement, memory, and cognition.</p>
+                    <div class="knowledge-details">
+                        <h4>Common Types:</h4>
+                        <ul>
+                            <li><strong>Alzheimer's Disease</strong> - Memory loss and cognitive decline caused by
+                                amyloid plaques and tau tangles</li>
+                            <li><strong>Parkinson's Disease</strong> - Movement disorders and tremors due to
+                                dopamine-producing neuron loss</li>
+                            <li><strong>Huntington's Disease</strong> - Involuntary movements and cognitive decline from
+                                genetic mutation</li>
+                            <li><strong>ALS (Lou Gehrig's Disease)</strong> - Progressive muscle weakness affecting
+                                motor neurons</li>
+                            <li><strong>Frontotemporal Dementia</strong> - Personality and language changes from frontal
+                                lobe degeneration</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- What Causes Them -->
+                <div class="knowledge-card">
+                    <div class="knowledge-icon">⚠️</div>
+                    <h3>What Causes Neurodegenerative Diseases?</h3>
+                    <p class="text-secondary">The primary cause is <strong>protein misfolding</strong> - when proteins
+                        don't fold correctly and accumulate in the brain, forming toxic clumps that damage and kill
+                        neurons.</p>
+                    <div class="knowledge-details">
+                        <h4>Key Factors:</h4>
+                        <ul>
+                            <li><strong>Genetic Mutations</strong> - Inherited gene changes that affect protein
+                                structure (e.g., APP, PSEN1, MAPT genes)</li>
+                            <li><strong>Protein Aggregation</strong> - Misfolded proteins clump together forming amyloid
+                                plaques, tau tangles, or Lewy bodies</li>
+                            <li><strong>Oxidative Stress</strong> - Damage from free radicals and reactive oxygen
+                                species</li>
+                            <li><strong>Mitochondrial Dysfunction</strong> - Energy production problems in brain cells
+                            </li>
+                            <li><strong>Neuroinflammation</strong> - Chronic brain inflammation accelerating damage</li>
+                            <li><strong>Age</strong> - Risk increases significantly after 65, doubling every 5 years
+                            </li>
+                            <li><strong>Environmental Factors</strong> - Toxins, head injuries, lifestyle choices</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Prevention & Health Tips -->
+                <div class="knowledge-card">
+                    <div class="knowledge-icon">💪</div>
+                    <h3>Prevention & Health Tips</h3>
+                    <p class="text-secondary">While not all neurodegenerative diseases can be prevented, lifestyle
+                        changes can significantly reduce risk and delay onset by years or even decades.</p>
+                    <div class="knowledge-details">
+                        <h4>Brain-Healthy Habits:</h4>
+                        <ul>
+                            <li><strong>Exercise Regularly</strong> - 30 minutes of aerobic activity 5x/week improves
+                                blood flow, promotes neurogenesis</li>
+                            <li><strong>Mediterranean Diet</strong> - Rich in omega-3s, antioxidants, and
+                                anti-inflammatory compounds</li>
+                            <li><strong>Mental Stimulation</strong> - Learning new skills, puzzles, reading builds
+                                cognitive reserve</li>
+                            <li><strong>Quality Sleep</strong> - 7-9 hours helps clear brain toxins through glymphatic
+                                system</li>
+                            <li><strong>Social Engagement</strong> - Regular social interaction protects cognitive
+                                function</li>
+                            <li><strong>Manage Stress</strong> - Meditation, yoga, mindfulness reduce cortisol and
+                                inflammation</li>
+                            <li><strong>Avoid Smoking</strong> - Smoking doubles dementia risk</li>
+                            <li><strong>Limit Alcohol</strong> - Excessive drinking damages brain cells</li>
+                            <li><strong>Manage Cardiovascular Health</strong> - Control blood pressure, cholesterol,
+                                diabetes</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Nutrition Recommendations -->
+                <div class="knowledge-card">
+                    <div class="knowledge-icon">🥗</div>
+                    <h3>Brain-Boosting Nutrition</h3>
+                    <p class="text-secondary">Certain foods have been scientifically shown to support brain health,
+                        reduce inflammation, and protect against cognitive decline.</p>
+                    <div class="knowledge-details">
+                        <h4>Foods to Include Daily:</h4>
+                        <ul>
+                            <li><strong>Fatty Fish</strong> - Salmon, sardines, mackerel (omega-3 DHA for brain
+                                structure)</li>
+                            <li><strong>Berries</strong> - Blueberries, strawberries (flavonoids improve memory)</li>
+                            <li><strong>Leafy Greens</strong> - Spinach, kale, collards (vitamin K, folate, beta
+                                carotene)</li>
+                            <li><strong>Nuts & Seeds</strong> - Walnuts, flaxseeds, chia (vitamin E, omega-3s)</li>
+                            <li><strong>Turmeric</strong> - Curcumin crosses blood-brain barrier, anti-inflammatory</li>
+                            <li><strong>Green Tea</strong> - L-theanine and EGCG protect brain cells</li>
+                            <li><strong>Dark Chocolate</strong> - Flavonoids improve blood flow to brain (70%+ cacao)
+                            </li>
+                            <li><strong>Whole Grains</strong> - Oats, quinoa, brown rice (steady glucose for brain
+                                energy)</li>
+                            <li><strong>Olive Oil</strong> - Extra virgin, rich in polyphenols</li>
+                        </ul>
+                        <h4 style="margin-top: 1rem;">Foods to Limit:</h4>
+                        <ul>
+                            <li>Processed foods and refined sugars (cause inflammation)</li>
+                            <li>Trans fats and excessive saturated fats</li>
+                            <li>Excessive red meat</li>
+                            <li>High-sodium foods (increase blood pressure)</li>
+                            <li>Excessive alcohol consumption</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Exercise Recommendations -->
+                <div class="knowledge-card">
+                    <div class="knowledge-icon">🏃</div>
+                    <h3>Exercise for Brain Health</h3>
+                    <p class="text-secondary">Physical activity is one of the most powerful tools for preventing
+                        cognitive decline and promoting brain health.</p>
+                    <div class="knowledge-details">
+                        <h4>Recommended Activities:</h4>
+                        <ul>
+                            <li><strong>Aerobic Exercise</strong> - Walking, jogging, swimming, cycling (150 min/week)
+                            </li>
+                            <li><strong>Strength Training</strong> - Weights, resistance bands (2x/week)</li>
+                            <li><strong>Balance & Coordination</strong> - Tai chi, yoga, dance</li>
+                            <li><strong>High-Intensity Interval Training</strong> - Short bursts boost BDNF (brain
+                                growth factor)</li>
+                        </ul>
+                        <h4 style="margin-top: 1rem;">Benefits:</h4>
+                        <ul>
+                            <li>Increases blood flow and oxygen to brain</li>
+                            <li>Stimulates growth of new neurons (neurogenesis)</li>
+                            <li>Reduces inflammation and insulin resistance</li>
+                            <li>Improves mood and reduces stress</li>
+                            <li>Enhances sleep quality</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Early Detection -->
+                <div class="knowledge-card">
+                    <div class="knowledge-icon">🔬</div>
+                    <h3>Importance of Early Detection</h3>
+                    <p class="text-secondary">Early diagnosis allows for better treatment outcomes, lifestyle
+                        interventions, and participation in clinical trials. Many symptoms can be managed if caught
+                        early.</p>
+                    <div class="knowledge-details">
+                        <h4>Warning Signs to Watch For:</h4>
+                        <ul>
+                            <li><strong>Memory Loss</strong> - Forgetting recently learned information, important dates
+                            </li>
+                            <li><strong>Planning Difficulties</strong> - Trouble following recipes, managing finances
+                            </li>
+                            <li><strong>Familiar Task Problems</strong> - Difficulty driving to known locations</li>
+                            <li><strong>Time/Place Confusion</strong> - Losing track of dates, seasons, passage of time
+                            </li>
+                            <li><strong>Visual/Spatial Issues</strong> - Difficulty reading, judging distance</li>
+                            <li><strong>Language Problems</strong> - Trouble finding words, repeating conversations</li>
+                            <li><strong>Misplacing Things</strong> - Putting items in unusual places, unable to retrace
+                                steps</li>
+                            <li><strong>Poor Judgment</strong> - Bad financial decisions, neglecting grooming</li>
+                            <li><strong>Social Withdrawal</strong> - Removing from hobbies, work, social activities</li>
+                            <li><strong>Mood Changes</strong> - Depression, anxiety, confusion, suspicion</li>
+                        </ul>
+                        <p
+                            style="margin-top: 1rem; padding: var(--spacing-md); background: var(--bg-secondary); border-radius: var(--radius-md);">
+                            <strong>⚠️ If you notice these symptoms in yourself or a loved one, consult a healthcare
+                                professional for comprehensive evaluation.</strong></p>
+                    </div>
+                </div>
+
+                <!-- Sleep & Brain Health -->
+                <div class="knowledge-card">
+                    <div class="knowledge-icon">😴</div>
+                    <h3>Sleep & Brain Health</h3>
+                    <p class="text-secondary">Quality sleep is essential for brain health. During sleep, the brain
+                        clears out toxins, including amyloid-beta proteins that form plaques in Alzheimer's disease.</p>
+                    <div class="knowledge-details">
+                        <h4>Sleep Recommendations:</h4>
+                        <ul>
+                            <li><strong>Duration</strong> - 7-9 hours per night for adults</li>
+                            <li><strong>Consistency</strong> - Same bedtime and wake time daily</li>
+                            <li><strong>Sleep Environment</strong> - Dark, quiet, cool (65-68°F)</li>
+                            <li><strong>Avoid Screens</strong> - No blue light 1 hour before bed</li>
+                            <li><strong>Limit Caffeine</strong> - No caffeine after 2 PM</li>
+                            <li><strong>Regular Schedule</strong> - Maintain routine even on weekends</li>
+                        </ul>
+                        <h4 style="margin-top: 1rem;">Why Sleep Matters:</h4>
+                        <ul>
+                            <li>Glymphatic system clears brain waste during deep sleep</li>
+                            <li>Memory consolidation occurs during REM sleep</li>
+                            <li>Poor sleep increases amyloid-beta accumulation</li>
+                            <li>Chronic sleep deprivation linked to dementia risk</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Mental Stimulation -->
+                <div class="knowledge-card">
+                    <div class="knowledge-icon">🧩</div>
+                    <h3>Mental Stimulation & Cognitive Reserve</h3>
+                    <p class="text-secondary">Keeping your brain active builds "cognitive reserve" - the brain's
+                        resilience against damage. Higher education and lifelong learning are protective factors.</p>
+                    <div class="knowledge-details">
+                        <h4>Brain-Stimulating Activities:</h4>
+                        <ul>
+                            <li><strong>Learn New Skills</strong> - Musical instrument, language, craft</li>
+                            <li><strong>Puzzles & Games</strong> - Crosswords, Sudoku, chess, strategy games</li>
+                            <li><strong>Reading</strong> - Books, articles, diverse topics</li>
+                            <li><strong>Creative Activities</strong> - Art, writing, music composition</li>
+                            <li><strong>Social Learning</strong> - Classes, discussion groups, teaching others</li>
+                            <li><strong>Technology</strong> - Learn new apps, software, devices</li>
+                        </ul>
+                        <h4 style="margin-top: 1rem;">Key Principle:</h4>
+                        <p style="margin-top: 0.5rem;">The activity should be <strong>novel and challenging</strong>.
+                            Doing the same crossword difficulty won't help as much as progressively harder ones or
+                            trying new types of puzzles.</p>
+                    </div>
+                </div>
+
+                <!-- How Proteomorphic Helps -->
+                <div class="knowledge-card highlight-card">
+                    <div class="knowledge-icon">✨</div>
+                    <h3>How Proteomorphic Helps</h3>
+                    <p class="text-secondary">Our platform enables early detection and intervention by analyzing protein
+                        structures at the molecular level, identifying risks before symptoms appear.</p>
+                    <div class="knowledge-details">
+                        <h4>Our Approach:</h4>
+                        <ul>
+                            <li><strong>Predict Misfolding</strong> - AI-powered analysis identifies proteins at risk of
+                                misfolding</li>
+                            <li><strong>Assess Risk</strong> - Calculate personalized risk scores based on genetic data
+                                and protein structure</li>
+                            <li><strong>Design Interventions</strong> - Generate CRISPR-based therapeutic strategies to
+                                correct mutations</li>
+                            <li><strong>Monitor Progress</strong> - Track biomarkers through IoT sensors and regular
+                                analysis</li>
+                            <li><strong>Comprehensive Reports</strong> - Detailed clinical reports with 3D visualization
+                            </li>
+                        </ul>
+                        <div style="margin-top: 1.5rem; text-align: center;">
+                            <a href="auth/signup.html" class="btn btn-primary btn-lg">Start Your Analysis</a>
+                            <p
+                                style="margin-top: var(--spacing-sm); font-size: var(--font-size-sm); color: var(--text-tertiary);">
+                                Free account • No credit card required</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section style="padding: var(--spacing-3xl) 0; background: var(--bg-secondary); text-align: center;">
+        <div class="container">
+            <h2>Ready to Take Control of Your Brain Health?</h2>
+            <p class="text-secondary"
+                style="margin: var(--spacing-md) 0 var(--spacing-xl) 0; font-size: var(--font-size-lg);">
+                Start with a comprehensive protein analysis to understand your risk factors
+            </p>
+            <div style="display: flex; gap: var(--spacing-md); justify-content: center; flex-wrap: wrap;">
+                <a href="auth/signup.html" class="btn btn-primary btn-lg">Get Started Free</a>
+                <a href="index.html" class="btn btn-outline btn-lg">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/auth.js"></script>
+</body>
+
+</html>

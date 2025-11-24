@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Proteomorphic</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+
+    <style>
+        body {
+            padding-top: 80px;
+        }
+
+        .dashboard-header {
+            background: var(--bg-secondary);
+            padding: var(--spacing-2xl) 0;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+        }
+
+        .stat-value {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .project-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            transition: all var(--transition-base);
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="../index.html" class="navbar-logo"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="../logo.png" alt="Proteomorphic" style="height: 32px; width: 32px; object-fit: contain;">
+                <span>Proteomorphic</span>
+            </a>
+            <ul class="navbar-menu">
+                <li><a href="../index.html" class="navbar-link">Home</a></li>
+                <li><a href="../knowledge.html" class="navbar-link">Knowledge Center</a></li>
+                <li><a href="../iot-monitoring.html" class="navbar-link">IoT Monitoring</a></li>
+                <li><a href="#" onclick="Auth.logout()" class="navbar-link">Logout</a></li>
+            </ul>
+            <div class="flex gap-sm">
+                <span class="text-sm text-secondary" style="align-self: center;">Logged in as <span
+                        id="navUserName">User</span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-header">
+        <div class="container">
+            <h1>Welcome back, <span id="userName"></span></h1>
+            <p class="text-secondary">Manage your protein analysis projects</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <p class="text-secondary mb-sm">Total Analyses</p>
+                <div class="stat-value" id="totalAnalyses">0</div>
+            </div>
+            <div class="stat-card">
+                <p class="text-secondary mb-sm">High Risk Cases</p>
+                <div class="stat-value" id="highRiskCases">0</div>
+            </div>
+            <div class="stat-card">
+                <p class="text-secondary mb-sm">CRISPR Protocols</p>
+                <div class="stat-value" id="crisprProtocols">0</div>
+            </div>
+            <div class="stat-card">
+                <p class="text-secondary mb-sm">Success Rate</p>
+                <div class="stat-value" id="successRate">0%</div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center mb-xl mt-2xl">
+            <h2>Recent Projects</h2>
+            <div class="flex gap-md">
+                <input type="text" id="searchInput" class="form-input" placeholder="Search projects..."
+                    style="width: 300px;">
+                <a href="../analysis/input.html" class="btn btn-primary">+ New Analysis</a>
+            </div>
+        </div>
+
+        <div id="noProjects" style="display: none;" class="card text-center">
+            <h3 class="mb-md">No projects yet</h3>
+            <p class="text-secondary mb-lg">Start your first protein analysis to see results here</p>
+            <a href="../analysis/input.html" class="btn btn-primary">Create First Analysis</a>
+        </div>
+
+        <div class="projects-grid" id="projectsGrid">
+            <!-- Projects will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Simple Auth -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/api-mock.js"></script>
+    <script src="../js/utils.js"></script>
+    <script>
+        // Check authentication
+        if (!Auth.requireAuth()) {
+            // Redirect handled by requireAuth
+        }
+
+        const user = Auth.getCurrentUser();
+        if (user) {
+            document.getElementById('userName').textContent = user.name || user.email.split('@')[0];
+            document.getElementById('navUserName').textContent = user.name || user.email.split('@')[0];
+        }
+
+        function loadProjects(searchQuery = '') {
+            let projects = searchQuery ? ProjectManager.searchProjects(searchQuery) : ProjectManager.getAllProjects();
+
+            const grid = document.getElementById('projectsGrid');
+            const noProjects = document.getElementById('noProjects');
+
+            if (projects.length === 0) {
+                grid.style.display = 'none';
+                noProjects.style.display = 'block';
+                updateStats([]);
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noProjects.style.display = 'none';
+            grid.innerHTML = '';
+
+            projects.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            projects.forEach(proj => {
+                const risk = proj.misfoldingRisk !== undefined ? proj.misfoldingRisk : (Math.floor(Math.random() * 40) + 60);
+                const riskClass = risk > 80 ? 'danger' : risk > 60 ? 'warning' : 'success';
+                const date = new Date(proj.createdAt).toLocaleDateString();
+
+                grid.innerHTML += `
+                    <div class="project-card">
+                        <div class="flex justify-between items-center mb-md">
+                            <h3>${proj.proteinName || 'Unknown Protein'}</h3>
+                            <span class="badge badge-${riskClass}">Risk: ${risk}%</span>
+                        </div>
+                        <p class="text-secondary mb-sm">Patient ID: ${proj.patientId || 'N/A'}</p>
+                        <p class="text-secondary mb-md">Created: ${date}</p>
+                        <div class="flex gap-sm">
+                            <a href="../report/view.html?id=${proj.id}" class="btn btn-outline btn-sm">View Report</a>
+                            <button onclick="deleteProject(${proj.id})" class="btn btn-secondary btn-sm">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            updateStats(projects);
+        }
+
+        function updateStats(projects) {
+            document.getElementById('totalAnalyses').textContent = projects.length;
+
+            const highRisk = projects.filter(p => (p.misfoldingRisk || 0) > 70).length;
+            document.getElementById('highRiskCases').textContent = highRisk;
+
+            const withCRISPR = projects.filter(p => p.crisprDesign).length;
+            document.getElementById('crisprProtocols').textContent = withCRISPR;
+
+            const successRate = projects.length > 0 ? Math.floor((withCRISPR / projects.length) * 100) : 0;
+            document.getElementById('successRate').textContent = successRate + '%';
+        }
+
+        function deleteProject(id) {
+            if (confirm('Are you sure you want to delete this project?')) {
+                ProjectManager.deleteProject(id);
+                loadProjects(document.getElementById('searchInput').value);
+            }
+        }
+        margin - bottom: var(--spacing - 2xl);
+        }
+
+        .stats - grid {
+            display: grid;
+            grid - template - columns: repeat(auto - fit, minmax(250px, 1fr));
+            gap: var(--spacing - lg);
+            margin - bottom: var(--spacing - 2xl);
+        }
+
+        .stat - card {
+            background: var(--glass - bg);
+            border: 1px solid var(--glass - border);
+            border - radius: var(--radius - lg);
+            padding: var(--spacing - xl);
+        }
+
+        .stat - value {
+            font - size: var(--font - size - 3xl);
+            font - weight: 700;
+            background: linear - gradient(135deg, var(--primary - gradient - start), var(--primary - gradient - end));
+            -webkit - background - clip: text;
+            background - clip: text;
+            -webkit - text - fill - color: transparent;
+        }
+
+        .projects - grid {
+            display: grid;
+            grid - template - columns: repeat(auto - fill, minmax(320px, 1fr));
+            gap: var(--spacing - lg);
+        }
+
+        .project - card {
+            background: var(--glass - bg);
+            border: 1px solid var(--glass - border);
+            border - radius: var(--radius - xl);
+            padding: var(--spacing - xl);
+            transition: all var(--transition - base);
+        }
+
+        .project - card:hover {
+            transform: translateY(-4px);
+            border - color: var(--primary);
+            box - shadow: var(--shadow - lg);
+        }
+    </style >
+</head >
+
+            <body>
+    <!-- Navigation -->
+                <nav class="navbar">
+                    <div class="container navbar-content">
+                        <a href="../index.html" class="navbar-logo"
+                            style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem;">
+                            <img src="../logo.png" alt="Proteomorphic" style="height: 32px; width: 32px; object-fit: contain;">
+                                <span>Proteomorphic</span>
+                        </a>
+                        <ul class="navbar-menu">
+                            <li><a href="../index.html" class="navbar-link">Home</a></li>
+                            <li><a href="../knowledge.html" class="navbar-link">Knowledge Center</a></li>
+                            <li><a href="../iot-monitoring.html" class="navbar-link">IoT Monitoring</a></li>
+                            <li><a href="#" onclick="Auth.logout()" class="navbar-link">Logout</a></li>
+                        </ul>
+                        <div class="flex gap-sm">
+                            <span class="text-sm text-secondary" style="align-self: center;">Logged in as <span
+                                id="navUserName">User</span></span>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="dashboard-header">
+                    <div class="container">
+                        <h1>Welcome back, <span id="userName"></span></h1>
+                        <p class="text-secondary">Manage your protein analysis projects</p>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <p class="text-secondary mb-sm">Total Analyses</p>
+                            <div class="stat-value" id="totalAnalyses">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <p class="text-secondary mb-sm">High Risk Cases</p>
+                            <div class="stat-value" id="highRiskCases">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <p class="text-secondary mb-sm">CRISPR Protocols</p>
+                            <div class="stat-value" id="crisprProtocols">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <p class="text-secondary mb-sm">Success Rate</p>
+                            <div class="stat-value" id="successRate">0%</div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-xl mt-2xl">
+                        <h2>Recent Projects</h2>
+                        <div class="flex gap-md">
+                            <input type="text" id="searchInput" class="form-input" placeholder="Search projects..."
+                                style="width: 300px;">
+                                <a href="../analysis/input.html" class="btn btn-primary">+ New Analysis</a>
+                        </div>
+                    </div>
+
+                    <div id="noProjects" style="display: none;" class="card text-center">
+                        <h3 class="mb-md">No projects yet</h3>
+                        <p class="text-secondary mb-lg">Start your first protein analysis to see results here</p>
+                        <a href="../analysis/input.html" class="btn btn-primary">Create First Analysis</a>
+                    </div>
+
+                    <div class="projects-grid" id="projectsGrid">
+                        <!-- Projects will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Simple Auth -->
+                <script src="../js/auth.js"></script>
+    <script src="../js/api-mock.js"></script>
+    <script src="../js/utils.js"></script>
+    <script>
+        // Check authentication
+            if (!Auth.requireAuth()) {
+                // Redirect handled by requireAuth
+            }
+
+            const user = Auth.getCurrentUser();
+            if (user) {
+                document.getElementById('userName').textContent = user.name || user.email.split('@')[0];
+            document.getElementById('navUserName').textContent = user.name || user.email.split('@')[0];
+        }
+
+            function loadProjects(searchQuery = '') {
+                let projects = searchQuery ? ProjectManager.searchProjects(searchQuery) : ProjectManager.getAllProjects();
+
+            const grid = document.getElementById('projectsGrid');
+            const noProjects = document.getElementById('noProjects');
+
+            if (projects.length === 0) {
+                grid.style.display = 'none';
+            noProjects.style.display = 'block';
+            updateStats([]);
+            return;
+            }
+
+            grid.style.display = 'grid';
+            noProjects.style.display = 'none';
+            grid.innerHTML = '';
+
+            projects.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            projects.forEach(proj => {
+                const risk = proj.misfoldingRisk !== undefined ? proj.misfoldingRisk : (Math.floor(Math.random() * 40) + 60);
+                const riskClass = risk > 80 ? 'danger' : risk > 60 ? 'warning' : 'success';
+            const date = new Date(proj.createdAt).toLocaleDateString();
+
+            grid.innerHTML += `
+            <div class="project-card">
+                <div class="flex justify-between items-center mb-md">
+                    <h3>${proj.proteinName || 'Unknown Protein'}</h3>
+                    <span class="badge badge-${riskClass}">Risk: ${risk}%</span>
+                </div>
+                <p class="text-secondary mb-sm">Patient ID: ${proj.patientId || 'N/A'}</p>
+                <p class="text-secondary mb-md">Created: ${date}</p>
+                <div class="flex gap-sm">
+                    <a href="../report/view.html?id=${proj.id}" class="btn btn-outline btn-sm">View Report</a>
+                    <button onclick="deleteProject(${proj.id})" class="btn btn-secondary btn-sm">Delete</button>
+                </div>
+            </div>
+                `;
+            });
+
+            updateStats(projects);
+        }
+
+        function updateStats(projects) {
+            document.getElementById('totalAnalyses').textContent = projects.length;
+
+            const highRisk = projects.filter(p => (p.misfoldingRisk || 0) > 70).length;
+            document.getElementById('highRiskCases').textContent = highRisk;
+
+            const withCRISPR = projects.filter(p => p.crisprDesign).length;
+            document.getElementById('crisprProtocols').textContent = withCRISPR;
+
+            const successRate = projects.length > 0 ? Math.floor((withCRISPR / projects.length) * 100) : 0;
+            document.getElementById('successRate').textContent = successRate + '%';
+        }
+
+        function deleteProject(id) {
+            if (confirm('Are you sure you want to delete this project?')) {
+                ProjectManager.deleteProject(id);
+                loadProjects(document.getElementById('searchInput').value);
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            loadProjects(e.target.value);
+        });
+
+        // Initial load
+        loadProjects();
+    </script>
+
+    <!-- Chatbot -->
+    <link rel="stylesheet" href="../css/chatbot.css">
+    <script src="../js/chatbot.js"></script>
+</body>
+
+</html>

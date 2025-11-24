@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results | Proteomorphic</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+
+    <style>
+        body {
+            padding-top: 80px;
+            background: var(--bg-primary);
+        }
+
+        .results-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-2xl);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        #viewer3d {
+            width: 100%;
+            height: 400px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+        }
+
+        @media (max-width: 968px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        <div class="results-container"><div class="flex justify-between items-center mb-xl"><div><h1>Analysis Results</h1><p class="text-secondary">Protein: <span id="proteinName">APP</span></p></div><a href="../report/view.html" class="btn btn-primary">View Full Report</a></div>< !-- Risk Score --><div class="card mb-xl"><div class="flex justify-between items-center"><div><h2>Misfolding Risk Score</h2><p class="text-secondary">Overall pathogenicity assessment</p></div><div style="text-align: right;"><div style="font-size: 4rem; font-weight: 800;" class="text-gradient">78</div><span class="badge badge-warning">High Risk</span></div></div></div><div class="results-grid">< !-- 3D Viewer --><div class="card"><h3 class="mb-lg">3D Protein Structure</h3><div id="viewer3d"></div><div class="mt-md flex gap-sm"><button class="btn btn-sm btn-secondary" onclick="resetView()">Reset View</button><button class="btn btn-sm btn-secondary" onclick="toggleStyle()">Toggle Style</button></div></div>< !-- Structural Analysis --><div class="card"><h3 class="mb-lg">Structural Analysis</h3><canvas id="structureChart"></canvas><div class="mt-lg"><div class="flex justify-between mb-sm"><span>Alpha Helix</span><span class="text-gradient">45%</span></div><div class="progress mb-md"><div class="progress-bar" style="width: 45%"></div></div><div class="flex justify-between mb-sm"><span>Beta Sheet</span><span class="text-gradient">30%</span></div><div class="progress mb-md"><div class="progress-bar" style="width: 30%"></div></div><div class="flex justify-between mb-sm"><span>Random Coil</span><span class="text-gradient">25%</span></div><div class="progress"><div class="progress-bar" style="width: 25%"></div></div></div></div>< !-- Misfolding Hotspots --><div class="card"><h3 class="mb-lg">Misfolding Hotspots</h3><table class="table"><thead><tr><th>Residue</th><th>Position</th><th>Severity</th><th>Confidence</th></tr></thead><tbody><tr><td><code>R175H</code></td><td>175</td><td><span class="badge badge-danger">High</span></td><td>95%</td></tr><tr><td><code>G245S</code></td><td>245</td><td><span class="badge badge-warning">Medium</span></td><td>87%</td></tr></tbody></table></div>< !-- CRISPR Recommendations --><div class="card"><h3 class="mb-lg">CRISPR Intervention</h3><div class="alert alert-success mb-md">2 guide RNAs designed with high efficiency </div><div class="mb-md"><strong>Top Guide RNA:</strong><code style="display: block; margin-top: var(--spacing-sm); padding: var(--spacing-sm); background: var(--bg-secondary); border-radius: var(--radius-sm);">GCTAGCTAGCTAGCTAGCTA </code><div class="flex justify-between mt-sm text-secondary"><span>Efficiency: 92%</span><span>Off-targets: 2</span></div></div><div><strong>Delivery System:</strong>AAV9 <br><strong>Success Probability:</strong>85% </div></div></div></div><script src="../js/auth.js"></script><script src="../js/api-mock.js"></script><script>Auth.requireAuth();
+
+        // Initialize 3D Viewer
+        let viewer=$3Dmol.createViewer("viewer3d", {
+            backgroundColor: 'rgb(20, 22, 30)'
+        });
+
+        // Load sample protein structure (PDB format)
+        $3Dmol.download("pdb:1YCR", viewer, {}
+
+        , function () {
+            viewer.setStyle({}
+
+            , {
+            cartoon: {
+                color: 'spectrum'
+            }
+        });
+        viewer.zoomTo();
+        viewer.render();
+        });
+
+        function resetView() {
+            viewer.zoomTo();
+            viewer.render();
+        }
+
+        function toggleStyle() {
+            viewer.setStyle({}
+
+            , {
+            stick: {}
+        });
+        viewer.render();
+        }
+
+        // Structure Chart
+        const ctx=document.getElementById('structureChart').getContext('2d');
+
+        new Chart(ctx, {
+
+            type: 'doughnut',
+            data: {
+
+                labels: ['Alpha Helix', 'Beta Sheet', 'Random Coil'],
+                datasets: [ {
+                    data: [45, 30, 25],
+                    backgroundColor: [ 'hsl(235, 85%, 60%)',
+                    'hsl(280, 85%, 60%)',
+                    'hsl(190, 95%, 55%)'
+                    ]
+                }
+
+                ]
+            }
+
+            ,
+            options: {
+
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#fff'
+                        }
+                    }
+                }
+            }
+        });
+        </script></body></html>

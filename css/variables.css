@@ -1,0 +1,96 @@
+:root {
+  /* Color Palette - Unique Proteomorphic Theme */
+  --primary: #06B6D4;
+  --primary-light: #22D3EE;
+  --primary-dark: #0891B2;
+  --primary-gradient-start: hsl(187, 95%, 43%);
+  --primary-gradient-end: hsl(271, 91%, 65%);
+
+  --secondary: #A855F7;
+  --secondary-light: #C084FC;
+  --secondary-dark: hsl(280, 91%, 60%);
+
+  --accent: #14F195;
+  --accent-light: #5EEAD4;
+  --accent-cyan: hsl(187, 95%, 55%);
+  --accent-green: hsl(158, 90%, 52%);
+  --accent-orange: hsl(31, 97%, 62%);
+  --accent-red: hsl(350, 89%, 60%);
+  --accent-pink: hsl(328, 85%, 65%);
+
+  --warning: #FBBF24;
+  --error: #F43F5E;
+  --success: #10B981;
+
+  /* Backgrounds - Deeper, richer tones */
+  --bg-primary: #0A0E1A;
+  --bg-secondary: #111827;
+  --bg-tertiary: #1F2937;
+  --bg-elevated: hsl(220, 26%, 18%);
+
+  /* Glass Effects - Enhanced with cyan tint */
+  --glass-bg: rgba(17, 24, 39, 0.85);
+  --glass-border: rgba(6, 182, 212, 0.15);
+
+  /* Text Colors */
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-tertiary: #64748B;
+
+  /* Borders */
+  --border-subtle: rgba(6, 182, 212, 0.08);
+  --border-medium: rgba(6, 182, 212, 0.15);
+
+  /* Shadows - Enhanced with cyan glow */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 30px hsla(187, 95%, 43%, 0.4);
+  --shadow-glow-purple: 0 0 30px hsla(271, 91%, 65%, 0.3);
+
+  /* Typography */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3.5rem;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  /* Z-index */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+
+  /* Font Family */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}

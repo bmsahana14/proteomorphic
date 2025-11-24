@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Proteomorphic</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <style>
+        body {
+            padding-top: 80px;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-2xl);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .stat-card {
+            padding: var(--spacing-xl);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+        }
+
+        .stat-value {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: var(--spacing-lg);
+        }
+
+        .users-table th {
+            text-align: left;
+            padding: var(--spacing-md);
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--border-medium);
+        }
+
+        .users-table td {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .users-table tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+        }
+
+        .role-neurologist {
+            background: hsla(235, 85%, 60%, 0.2);
+            color: var(--primary-light);
+        }
+
+        .role-researcher {
+            background: hsla(280, 85%, 60%, 0.2);
+            color: #A855F7;
+        }
+
+        .role-student {
+            background: hsla(45, 85%, 60%, 0.2);
+            color: #F59E0B;
+        }
+
+        .role-institution {
+            background: hsla(160, 85%, 60%, 0.2);
+            color: #10B981;
+        }
+
+        .role-laboratory {
+            background: hsla(200, 85%, 60%, 0.2);
+            color: #06B6D4;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            font-size: var(--font-size-xs);
+            margin-right: 4px;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        <button onclick="clearAllData()" class="btn btn-secondary btn-sm">Clear All Data</button></div></nav><div class="admin-container"><h1 class="mb-lg">Admin Panel</h1><p class="text-secondary mb-2xl">View and manage all registered users</p>< !-- Statistics --><div class="stats-grid"><div class="stat-card"><div class="stat-value" id="totalUsers">0</div><div class="stat-label">Total Users</div></div><div class="stat-card"><div class="stat-value" id="totalProjects">0</div><div class="stat-label">Total Projects</div></div><div class="stat-card"><div class="stat-value" id="neurologistsCount">0</div><div class="stat-label">Neurologists</div></div><div class="stat-card"><div class="stat-value" id="studentsCount">0</div><div class="stat-label">Students</div></div></div>< !-- Search --><input type="text" id="searchInput" class="form-input search-box"
+        placeholder="Search by name, email, or role...">< !-- Users Table --><div class="card"><h2 class="mb-lg">Registered Users</h2><div style="overflow-x: auto;"><table class="users-table" id="usersTable"><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Organization</th><th>Registered</th><th>Actions</th></tr></thead><tbody id="usersTableBody"><tr><td colspan="7"
+        style="text-align: center; padding: var(--spacing-2xl); color: var(--text-tertiary);">No users found. Users will appear here when they sign up. </td></tr></tbody></table></div></div>< !-- LocalStorage Data Viewer --><div class="card mt-2xl"><h2 class="mb-lg">LocalStorage Data</h2><p class="text-secondary mb-md">Raw data stored in browser's LocalStorage:</p>
+ <div style="background: var(--bg-secondary); padding: var(--spacing-lg); border-radius: var(--radius-md); overflow-x: auto;"><pre id="localStorageData"
+        style="margin: 0; color: var(--text-primary); font-size: var(--font-size-sm);"></pre></div><div class="mt-md"><button onclick="refreshData()" class="btn btn-primary btn-sm">Refresh Data</button><button onclick="exportData()" class="btn btn-secondary btn-sm">Export JSON</button></div></div></div><script src="js/auth.js"></script><script>let allUsers=[];
+
+        function loadUsers() {
+            // Get all users from localStorage
+            const users=[];
+
+            // Check for current user
+            const currentUser=Storage.get('currentUser');
+
+            if (currentUser) {
+                users.push(currentUser);
+            }
+
+            // Check for any other users stored
+            for (let i=0; i < localStorage.length; i++) {
+                const key=localStorage.key(i);
+
+                if (key.startsWith ('user_')) {
+                    try {
+                        const user=JSON.parse(localStorage.getItem(key));
+                        users.push(user);
+                    }
+
+                    catch (e) {}
+                }
+            }
+
+            allUsers=users;
+            displayUsers(users);
+            updateStats(users);
+            displayLocalStorageData();
+        }
+
+        function displayUsers(users) {
+            const tbody=document.getElementById('usersTableBody');
+
+            if (users.length===0) {
+                tbody.innerHTML=` <tr><td colspan="7" style="text-align: center; padding: var(--spacing-2xl); color: var(--text-tertiary);">No users found. Users will appear here when they sign up. </td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML=users.map((user, index)=> ` <tr> <td>$ {
+                    index + 1
+                }
+
+                </td> <td><strong>$ {
+                    user.name || user.firstName + ' ' + user.lastName || 'N/A'
+                }
+
+                </strong></td> <td>$ {
+                    user.email || 'N/A'
+                }
+
+                </td> <td><span class="role-badge role-${user.role}" >$ {
+                    getRoleIcon(user.role)
+                }
+
+                $ {
+                    capitalize(user.role)
+                }
+
+                </span></td> <td>$ {
+                    user.organization || 'N/A'
+                }
+
+                </td> <td>$ {
+                    formatDate(user.createdAt)
+                }
+
+                </td> <td> <button onclick="viewUser(${user.id})" class="btn btn-primary action-btn" >View</button> <button onclick="deleteUser(${user.id})" class="btn btn-secondary action-btn" >Delete</button> </td> </tr> `).join('');
+        }
+
+        function updateStats(users) {
+            document.getElementById('totalUsers').textContent=users.length;
+
+            // Count by role
+            const neurologistsCount=users.filter(u=> u.role==='neurologist').length;
+            const studentsCount=users.filter(u=> u.role==='student').length;
+
+            document.getElementById('neurologistsCount').textContent=neurologistsCount;
+            document.getElementById('studentsCount').textContent=studentsCount;
+
+            // Count projects
+            const projects=Storage.get('projects') || [];
+            document.getElementById('totalProjects').textContent=projects.length;
+        }
+
+        function displayLocalStorageData() {
+            const data= {}
+
+            ;
+
+            for (let i=0; i < localStorage.length; i++) {
+                const key=localStorage.key(i);
+
+                try {
+                    data[key]=JSON.parse(localStorage.getItem(key));
+                }
+
+                catch (e) {
+                    data[key]=localStorage.getItem(key);
+                }
+            }
+
+            document.getElementById('localStorageData').textContent=JSON.stringify(data, null, 2);
+        }
+
+        function getRoleIcon(role) {
+            const icons= {
+                neurologist: '👨‍⚕️',
+                    researcher: '🔬',
+                    student: '🎓',
+                    institution: '🏥',
+                    laboratory: '🧪'
+            }
+
+            ;
+            return icons[role] || '👤';
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase()+str.slice(1);
+        }
+
+        function formatDate(dateString) {
+            if ( !dateString) return 'N/A';
+            const date=new Date(dateString);
+
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function viewUser(userId) {
+            const user=allUsers.find(u=> u.id===userId);
+
+            if (user) {
+                alert(`User Details:\n\nName: $ {
+                        user.name || 'N/A'
+                    }
+
+                    \nEmail: $ {
+                        user.email
+                    }
+
+                    \nRole: $ {
+                        capitalize(user.role)
+                    }
+
+                    \nOrganization: $ {
+                        user.organization || 'N/A'
+                    }
+
+                    \nRegistered: $ {
+                        formatDate(user.createdAt)
+                    }
+
+                    `);
+            }
+        }
+
+        function deleteUser(userId) {
+            if (confirm('Are you sure you want to delete this user?')) {
+
+                // Remove from localStorage
+                localStorage.removeItem(`user_$ {
+                        userId
+                    }
+
+                    `);
+
+                // If it's the current user, remove that too
+                const currentUser=Storage.get('currentUser');
+
+                if (currentUser && currentUser.id===userId) {
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('isAuthenticated');
+                }
+
+                // Reload users
+                loadUsers();
+                alert('User deleted successfully!');
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ WARNING: This will delete ALL users and projects!\n\nAre you absolutely sure?')) {
+                if (confirm('This action cannot be undone. Continue?')) {
+                    localStorage.clear();
+                    loadUsers();
+                    alert('All data cleared successfully!');
+                }
+            }
+        }
+
+        function refreshData() {
+            loadUsers();
+            alert('Data refreshed!');
+        }
+
+        function exportData() {
+            const data= {}
+
+            ;
+
+            for (let i=0; i < localStorage.length; i++) {
+                const key=localStorage.key(i);
+
+                try {
+                    data[key]=JSON.parse(localStorage.getItem(key));
+                }
+
+                catch (e) {
+                    data[key]=localStorage.getItem(key);
+                }
+            }
+
+            const blob=new Blob([JSON.stringify(data, null, 2)], {
+                type: 'application/json'
+            });
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url;
+
+        a.download=`proteomorphic-data-$ {
+            Date.now()
+        }
+
+        .json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function (e) {
+                const searchTerm=e.target.value.toLowerCase();
+
+                const filteredUsers=allUsers.filter(user=> {
+                        return (user.name && user.name.toLowerCase().includes(searchTerm)) || (user.email && user.email.toLowerCase().includes(searchTerm)) || (user.role && user.role.toLowerCase().includes(searchTerm)) || (user.organization && user.organization.toLowerCase().includes(searchTerm));
+                    });
+                displayUsers(filteredUsers);
+            });
+
+        // Load users on page load
+        loadUsers();
+
+        // Auto-refresh every 5 seconds
+        setInterval(loadUsers, 5000);
+        </script></body></html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Analysis | Proteomorphic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <style>
+        body {
+            padding-top: 80px;
+        }
+
+        .analysis-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--spacing-2xl);
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-3xl);
+            position: relative;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border-medium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-sm);
+            font-weight: 700;
+            transition: all var(--transition-base);
+        }
+
+        .step.active .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: white;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.4s;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="../index.html" class="navbar-logo"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="../logo.png" alt="Proteomorphic" style="height: 32px; width: 32px; object-fit: contain;">
+                <span>Proteomorphic</span>
+            </a>
+            <ul class="navbar-menu">
+                <li><a href="../dashboard/index.html" class="navbar-link">Dashboard</a></li>
+                <li><a href="../knowledge.html" class="navbar-link">Knowledge Center</a></li>
+            </ul>
+            <button onclick="Auth.logout()" class="btn btn-secondary btn-sm">Logout</button>
+        </div>
+    </nav>
+    <div class="analysis-container">
+        <h1 class="mb-lg">New Protein Analysis</h1>
+        <div class="step-indicator">
+            <div class="step active" data-step="1">
+                <div class="step-number">1</div>
+                <p class="text-secondary">Protein Input</p>
+            </div>
+            <div class="step" data-step="2">
+                <div class="step-number">2</div>
+                <p class="text-secondary">Genetic Data</p>
+            </div>
+            <div class="step" data-step="3">
+                <div class="step-number">3</div>
+                <p class="text-secondary">Clinical Info</p>
+            </div>
+            <div class="step" data-step="4">
+                <div class="step-number">4</div>
+                <p class="text-secondary">Review</p>
+            </div>
+        </div>
+        <form id="analysisForm">
+            <div class="form-section active" data-section="1">
+                <div class="card">
+                    <h2 class="mb-lg">Protein Information</h2>
+                    <div class="form-group">
+                        <label class="form-label">Protein Name or Database ID</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="proteinName" class="form-input"
+                                placeholder="Enter any protein name or ID (e.g., APP, Insulin, P05067)"
+                                list="proteinSuggestions" style="flex: 1;">
+                            <button type="button" id="fetchBtn" onclick="fetchProteinSequence()" class="btn btn-outline"
+                                style="white-space: nowrap;">🔗 Fetch from Database</button>
+                        </div>
+                        <datalist id="proteinSuggestions">
+                            <option value="APP">APP - Amyloid Beta Precursor</option>
+                            <option value="MAPT">MAPT - Tau Protein</option>
+                            <option value="SNCA">SNCA - Alpha-Synuclein</option>
+                            <option value="TP53">TP53 - Tumor Protein P53</option>
+                            <option value="HTT">HTT - Huntingtin</option>
+                            <option value="Insulin">Insulin</option>
+                            <option value="Hemoglobin">Hemoglobin</option>
+                        </datalist>
+                        <small class="text-secondary" style="display: block; margin-top: 4px;">Enter any protein name or
+                            database ID</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Protein Sequence</label>
+                        <textarea id="proteinSequence" class="form-textarea" rows="6"
+                            placeholder="Sequence will be auto-filled or enter manually..."></textarea>
+                        <div id="sequenceInfo"
+                            style="margin-top: 8px; padding: 12px; background: var(--bg-secondary); border-radius: 8px; display: none;">
+                            <div id="sequenceInfoContent"></div>
+                            <div id="externalLinks" style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+                                <a href="#" id="uniprotLink" target="_blank" class="btn btn-sm btn-outline"
+                                    style="display: none;">🔗 UniProt</a>
+                                <a href="#" id="ncbiLink" target="_blank" class="btn btn-sm btn-outline"
+                                    style="display: none;">🧬 NCBI</a>
+                                <a href="#" id="alphafoldLink" target="_blank" class="btn btn-sm btn-outline"
+                                    style="display: none;">🤖 AlphaFold</a>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="nextStep()">Next Step →</button>
+                </div>
+            </div>
+            <div class="form-section" data-section="2">
+                <div class="card">
+                    <h2 class="mb-lg">Genetic Variant Upload</h2>
+                    <div class="form-group"><label class="form-label">Upload VCF/FASTQ File</label><input type="file"
+                            id="geneticFile" class="form-file" accept=".vcf,.fastq"></div>
+                    <div class="form-group"><label class="form-label">Known Mutations</label><input type="text"
+                            id="mutations" class="form-input" placeholder="e.g., R175H, G245S"></div>
+                    <div class="flex gap-md">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep()">← Previous</button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep()">Next Step →</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-section" data-section="3">
+                <div class="card">
+                    <h2 class="mb-lg">Patient Clinical Information</h2>
+                    <div class="form-group">
+                        <label class="form-label">Patient ID</label>
+                        <input type="text" id="patientId" class="form-input" placeholder="e.g., P12345">
+                        <button type="button" class="btn btn-outline btn-sm" onclick="viewIoTMonitoring()"
+                            style="margin-top: 8px;">🌐 View Live IoT Sensors</button>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Symptoms (Select all that apply)</label>
+                        <div style="display: grid; gap: var(--spacing-sm);">
+                            <label><input type="checkbox" name="symptoms" value="memory"> Memory loss</label>
+                            <label><input type="checkbox" name="symptoms" value="tremors"> Tremors</label>
+                            <label><input type="checkbox" name="symptoms" value="cognitive"> Cognitive decline</label>
+                            <label><input type="checkbox" name="symptoms" value="motor"> Motor dysfunction</label>
+                        </div>
+                    </div>
+                    <div class="flex gap-md">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep()">← Previous</button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep()">Review →</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-section" data-section="4">
+                <div class="card">
+                    <h2 class="mb-lg">Review & Submit</h2>
+                    <div class="alert alert-info">Please review your information before submitting for analysis</div>
+                    <div id="reviewContent" class="mt-lg"></div>
+                    <div class="flex gap-md mt-xl">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep()">← Previous</button>
+                        <button type="button" class="btn btn-primary" onclick="submitAnalysis()">Start Analysis</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="../js/auth.js"></script>
+    <script src="../js/utils.js"></script>
+    <script>
+        Auth.requireAuth();
+        let currentStep = 1;
+        function nextStep() { if (currentStep < 4) { currentStep++; updateSteps(); if (currentStep === 4) showReview(); } }
+        function prevStep() { if (currentStep > 1) { currentStep--; updateSteps(); } }
+        function updateSteps() {
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            document.querySelector(`[data-section="${currentStep}"]`).classList.add('active');
+            document.querySelectorAll('.step').forEach((s, i) => {
+                s.classList.remove('active', 'completed');
+                if (i + 1 === currentStep) s.classList.add('active');
+                else if (i + 1 < currentStep) s.classList.add('completed');
+            });
+        }
+        function showReview() {
+            const p = document.getElementById('proteinName').value || 'Not provided';
+            const m = document.getElementById('mutations').value || 'None';
+            const pid = document.getElementById('patientId').value || 'Not provided';
+            const s = Array.from(document.querySelectorAll('input[name="symptoms"]:checked')).map(c => c.nextSibling.textContent.trim()).join(', ') || 'None';
+            document.getElementById('reviewContent').innerHTML = `<div style="background: var(--bg-secondary); padding: var(--spacing-lg); border-radius: var(--radius-md);"><h4 class="mb-md">Summary</h4><p><strong>Protein:</strong> ${p}</p><p><strong>Mutations:</strong> ${m}</p><p><strong>Patient ID:</strong> ${pid}</p><p><strong>Symptoms:</strong> ${s}</p></div>`;
+        }
+        function viewIoTMonitoring() {
+            const pid = document.getElementById('patientId').value;
+            if (!pid) { alert('Please enter a Patient ID first'); return; }
+            localStorage.setItem('currentPatientId', pid);
+            window.open(`../iot-monitoring.html?patient=${pid}`, '_blank');
+        }
+        async function fetchFromUniProt(q) {
+            const r = await fetch(`https://rest.uniprot.org/uniprotkb/search?query=${q}&format=json&size=1`);
+            if (!r.ok) throw new Error('UniProt failed');
+            const d = await r.json();
+            if (!d.results || !d.results.length) throw new Error('Not found');
+            const p = d.results[0];
+            return { sequence: p.sequence.value, name: p.proteinDescription.recommendedName.fullName.value, organism: p.organism.scientificName, length: p.sequence.length, uniprotId: p.primaryAccession, source: 'UniProt' };
+        }
+        async function fetchFromNCBI(q) {
+            const sr = await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=protein&term=${q}&retmode=json`);
+            const sd = await sr.json();
+            if (!sd.esearchresult.idlist.length) throw new Error('Not found');
+            const id = sd.esearchresult.idlist[0];
+            const fr = await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&id=${id}&rettype=fasta&retmode=text`);
+            const ft = await fr.text();
+            const ls = ft.split('\n');
+            const seq = ls.slice(1).join('').replace(/\s/g, '');
+            const nm = ls[0].match(/\[([^\]]+)\]/);
+            return { sequence: seq, name: nm ? nm[1] : ls[0].substring(1, 50), length: seq.length, ncbiId: id, source: 'NCBI' };
+        }
+        function displayProteinData(d) {
+            document.getElementById('proteinSequence').value = d.sequence;
+            document.getElementById('sequenceInfoContent').innerHTML = `<div style="color: var(--accent-green); font-weight: 600; margin-bottom: 8px;">✅ Loaded from ${d.source}</div><div style="font-size: 14px;"><strong>${d.name}</strong><br>${d.organism ? `Organism: ${d.organism}<br>` : ''}Length: ${d.length} amino acids<br>ID: ${d.uniprotId || d.ncbiId}</div>`;
+            document.getElementById('sequenceInfo').style.display = 'block';
+            if (d.uniprotId) {
+                document.getElementById('uniprotLink').href = `https://www.uniprot.org/uniprotkb/${d.uniprotId}`;
+                document.getElementById('uniprotLink').style.display = 'inline-block';
+                document.getElementById('alphafoldLink').href = `https://alphafold.ebi.ac.uk/entry/${d.uniprotId}`;
+                document.getElementById('alphafoldLink').style.display = 'inline-block';
+            }
+            if (d.ncbiId) {
+                document.getElementById('ncbiLink').href = `https://www.ncbi.nlm.nih.gov/protein/${d.ncbiId}`;
+                document.getElementById('ncbiLink').style.display = 'inline-block';
+                if (!d.uniprotId && d.name) tryGetUniProtId(d.name);
+            }
+        }
+        async function tryGetUniProtId(name) {
+            try {
+                const r = await fetch(`https://rest.uniprot.org/uniprotkb/search?query=${encodeURIComponent(name)}&format=json&size=1`);
+                if (r.ok) {
+                    const d = await r.json();
+                    if (d.results && d.results.length) {
+                        const uid = d.results[0].primaryAccession;
+                        document.getElementById('alphafoldLink').href = `https://alphafold.ebi.ac.uk/entry/${uid}`;
+                        document.getElementById('alphafoldLink').style.display = 'inline-block';
+                        document.getElementById('uniprotLink').href = `https://www.uniprot.org/uniprotkb/${uid}`;
+                        document.getElementById('uniprotLink').style.display = 'inline-block';
+                    }
+                }
+            } catch (e) { console.log('UniProt mapping failed:', e); }
+        }
+        async function fetchProteinSequence() {
+            const q = document.getElementById('proteinName').value.trim();
+            if (!q) { alert('Please enter a protein name or ID'); return; }
+            const btn = document.getElementById('fetchBtn');
+            const ot = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = '⏳ Fetching...';
+            document.getElementById('sequenceInfo').style.display = 'none';
+            ['uniprotLink', 'ncbiLink', 'alphafoldLink'].forEach(id => document.getElementById(id).style.display = 'none');
+            try {
+                btn.textContent = '⏳ UniProt...';
+                const d = await fetchFromUniProt(q);
+                displayProteinData(d);
+                btn.textContent = '✅ Loaded!';
+            } catch (e1) {
+                try {
+                    btn.textContent = '⏳ NCBI...';
+                    const d = await fetchFromNCBI(q);
+                    displayProteinData(d);
+                    btn.textContent = '✅ Loaded!';
+                } catch (e2) {
+                    alert('Protein not found. Please enter sequence manually.');
+                    btn.textContent = ot;
+                }
+            } finally {
+                setTimeout(() => { btn.disabled = false; if (btn.textContent === '✅ Loaded!') btn.textContent = ot; }, 2000);
+            }
+        }
+        function submitAnalysis() {
+            const pn = document.getElementById('proteinName').value;
+            const ps = document.getElementById('proteinSequence').value;
+            const pid = document.getElementById('patientId').value;
+            if (!pn) { alert('Please enter a protein name'); currentStep = 1; updateSteps(); return; }
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = 'Analyzing...';
+            setTimeout(async () => {
+                try {
+                    const ar = await AnalysisEngine.analyzeProtein({ proteinName: pn, proteinSequence: ps });
+                    const pr = ProjectManager.saveProject({ proteinName: pn, proteinSequence: ps, patientId: pid || 'N/A', misfoldingRisk: ar.misfoldingRisk, confidence: ar.confidence, riskLevel: ar.riskLevel, structure: ar.structure, hotspots: ar.hotspots, crisprDesign: ar.crisprDesign, clinicalData: ar.clinicalData, status: 'completed' });
+                    localStorage.setItem('currentAnalysis', JSON.stringify(pr));
+                    alert('Analysis completed!');
+                    window.location.href = '../report/view.html';
+                } catch (e) { alert('Analysis failed'); btn.disabled = false; btn.innerHTML = 'Start Analysis'; }
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>

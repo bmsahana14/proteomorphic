@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create your Proteomorphic account">
+    <title>Sign Up | Proteomorphic</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 30%, hsla(235, 85%, 60%, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, hsla(280, 85%, 60%, 0.15) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .auth-box {
+            width: 100%;
+            max-width: 650px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-3xl);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .auth-logo {
+            font-size: var(--font-size-3xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .role-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .role-option {
+            position: relative;
+        }
+
+        .role-input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .role-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md);
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-align: center;
+        }
+
+        .role-label:hover {
+            border-color: var(--primary);
+            background: var(--bg-tertiary);
+        }
+
+        .role-input:checked+.role-label {
+            border-color: var(--primary);
+            background: hsla(235, 85%, 60%, 0.1);
+            box-shadow: 0 0 0 3px hsla(235, 85%, 60%, 0.1);
+        }
+
+        .role-icon {
+            font-size: var(--font-size-2xl);
+        }
+
+        .role-name {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-md);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin: var(--spacing-xl) 0;
+            color: var(--text-tertiary);
+            font-size: var(--font-size-sm);
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-subtle);
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-md);
+            display: none;
+        }
+
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            color: #10b981;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-md);
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-bg"></div>
+
+        <div class="auth-box animate-fade-in">
+            <div class="auth-header">
+                <div class="auth-logo">🧬</div>
+                <h1>Create Account</h1>
+                <p class="text-secondary">Join Proteomorphic today</p>
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+
+            <form id="signupForm">
+                <div class="form-group">
+                    <label class="form-label">Select Your Role</label>
+                    <div class="role-selector">
+                        <div class="role-option">
+                            <input type="radio" name="role" value="neurologist" id="role-neurologist" class="role-input"
+                                checked>
+                            <label for="role-neurologist" class="role-label">
+                                <span class="role-icon">👨‍⚕️</span>
+                                <span class="role-name">Neurologist</span>
+                            </label>
+                        </div>
+
+                        <div class="role-option">
+                            <input type="radio" name="role" value="researcher" id="role-researcher" class="role-input">
+                            <label for="role-researcher" class="role-label">
+                                <span class="role-icon">🔬</span>
+                                <span class="role-name">Researcher</span>
+                            </label>
+                        </div>
+
+                        <div class="role-option">
+                            <input type="radio" name="role" value="student" id="role-student" class="role-input">
+                            <label for="role-student" class="role-label">
+                                <span class="role-icon">🎓</span>
+                                <span class="role-name">Student</span>
+                            </label>
+                        </div>
+
+                        <div class="role-option">
+                            <input type="radio" name="role" value="institution" id="role-institution"
+                                class="role-input">
+                            <label for="role-institution" class="role-label">
+                                <span class="role-icon">🏥</span>
+                                <span class="role-name">Institution</span>
+                            </label>
+                        </div>
+
+                        <div class="role-option">
+                            <input type="radio" name="role" value="laboratory" id="role-laboratory" class="role-input">
+                            <label for="role-laboratory" class="role-label">
+                                <span class="role-icon">🧪</span>
+                                <span class="role-name">Laboratory</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" id="firstName" class="form-input" placeholder="John" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" id="lastName" class="form-input" placeholder="Doe" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="email" class="form-input" placeholder="your.email@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="organization" class="form-label">Organization</label>
+                    <input type="text" id="organization" class="form-input"
+                        placeholder="Hospital, University, or Research Institution" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" class="form-input" placeholder="Min. 8 characters"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                        <input type="password" id="confirmPassword" class="form-input" placeholder="Re-enter password"
+                            required>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: var(--spacing-xl);">
+                    <label style="display: flex; align-items: flex-start; gap: var(--spacing-sm); cursor: pointer;">
+                        <input type="checkbox" id="terms" required style="margin-top: 4px;">
+                        <span class="text-secondary" style="font-size: var(--font-size-sm);">
+                            I agree to the Terms of Service and Privacy Policy, including HIPAA/GDPR compliance
+                            requirements
+                        </span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="submitBtn">Create
+                    Account</button>
+
+                <div class="divider">or</div>
+
+                <p class="text-center text-secondary">
+                    Already have an account?
+                    <a href="login.html" style="color: var(--primary-light); font-weight: 600;">Sign in</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+
+    <script>
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        document.getElementById('signupForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const organization = document.getElementById('organization').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const role = document.querySelector('input[name="role"]:checked').value;
+
+            // Validation
+            if (password !== confirmPassword) {
+                showError('Passwords do not match!');
+                return;
+            }
+
+            if (password.length < 8) {
+                showError('Password must be at least 8 characters long!');
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Creating Account...';
+            submitBtn.disabled = true;
+
+            try {
+                console.log('Starting signup process...');
+
+                // Check if Supabase is initialized
+                if (!window.supabase) {
+                    throw new Error('Supabase is not initialized. Please check your configuration.');
+                }
+
+                // Sign up with Supabase Auth
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            role: role,
+                            first_name: firstName,
+                            last_name: lastName,
+                            organization: organization,
+                            name: `${firstName} ${lastName}`
+                        }
+                    }
+                });
+
+                if (authError) {
+                    console.error('Auth error:', authError);
+                    throw authError;
+                }
+
+                console.log('Auth successful:', authData);
+
+                // Check if email confirmation is required
+                if (authData.user && !authData.session) {
+                    showSuccess('✅ Account created! Please check your email to confirm your account.');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 3000);
+                    return;
+                }
+
+                showSuccess('✅ Account created successfully! Redirecting...');
+
+                // Redirect to dashboard after a short delay
+                setTimeout(() => {
+                    window.location.href = '../dashboard/index.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Signup error:', error);
+
+                let errorMessage = 'Signup failed. ';
+                if (error.message) {
+                    errorMessage += error.message;
+                } else {
+                    errorMessage += 'Please try again or contact support.';
+                }
+
+                showError(errorMessage);
+
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

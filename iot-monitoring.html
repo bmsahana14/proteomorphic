@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Monitoring (Demo) | Proteomorphic</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <style>
+        body {
+            padding-top: 80px;
+        }
+
+        .patient-info {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .risk-indicator {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin-bottom: var(--spacing-2xl);
+            text-align: center;
+        }
+
+        .risk-value {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: var(--spacing-md) 0;
+        }
+
+        .risk-low {
+            color: #10b981;
+        }
+
+        .risk-medium {
+            color: #f59e0b;
+        }
+
+        .risk-high {
+            color: #ef4444;
+        }
+
+        .risk-factors {
+            margin-top: var(--spacing-lg);
+            text-align: left;
+            background: var(--bg-secondary);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+        }
+
+        .iot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .sensor-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            transition: all 0.3s ease;
+        }
+
+        .sensor-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .sensor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .sensor-icon {
+            font-size: 2.5rem;
+        }
+
+        .sensor-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .sensor-value {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: var(--spacing-sm) 0;
+        }
+
+        .sensor-label {
+            color: var(--text-tertiary);
+            font-size: var(--font-size-sm);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="index.html" class="navbar-logo"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="logo.png" alt="Proteomorphic" style="height: 32px; width: 32px; object-fit: contain;">
+                <span>Proteomorphic</span>
+            </a>
+            <ul class="navbar-menu">
+                <li><a href="index.html" class="navbar-link">Home</a></li>
+                <li><a href="knowledge.html" class="navbar-link">Knowledge Center</a></li>
+                <li><a href="dashboard/index.html" class="navbar-link">Dashboard</a></li>
+            </ul>
+            <a href="auth/login.html" class="btn btn-primary btn-sm">Sign In</a>
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 20px;">
+        <!-- Demo Banner -->
+        <div class="alert alert-info" style="margin-bottom: var(--spacing-xl); border-left-width: 6px;">
+            <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    style="flex-shrink: 0;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <div>
+                    <strong style="font-size: 1.1rem;">📊 Proof-of-Concept Demo</strong>
+                    <p style="margin: 4px 0 0 0; opacity: 0.9;">This page demonstrates potential IoT integration
+                        capabilities. All sensor data is simulated for demonstration purposes. In a production
+                        environment, this would connect to real biosensors and medical devices.</p>
+                </div>
+            </div>
+        </div>
+
+        <h1>🌐 IoT Sensor Monitoring <span class="badge badge-primary"
+                style="font-size: 0.5em; vertical-align: middle; margin-left: 12px;">DEMO</span></h1>
+
+        <!-- Patient Info -->
+        <div class="patient-info">
+            <h3>Monitoring Patient: <span id="patientId">Loading...</span></h3>
+            <p class="text-secondary" id="patientStatus">Connecting to sensors...</p>
+            <p style="margin-top: 8px; font-size: 0.875rem; color: var(--accent-cyan);">💡 Simulated data updates every
+                3 seconds</p>
+        </div>
+
+        <!-- Risk Indicator -->
+        <div class="risk-indicator">
+            <h2>Current Misfolding Risk <span
+                    style="font-size: 0.6em; color: var(--text-tertiary); font-weight: 400;">(Simulated)</span></h2>
+            <div class="risk-value risk-low" id="riskValue">--</div>
+            <p class="text-secondary" id="riskLevel">Calculating...</p>
+            <div class="risk-factors">
+                <strong>Risk Factors:</strong>
+                <p id="riskFactors" style="margin-top: 8px;">Loading patient data...</p>
+            </div>
+        </div>
+
+        <!-- Sensor Grid -->
+        <div class="iot-grid">
+            <div class="sensor-card">
+                <div class="sensor-header">
+                    <span class="sensor-icon">🌡️</span>
+                    <span class="sensor-status"></span>
+                </div>
+                <div class="sensor-value" id="temp">--</div>
+                <div class="sensor-label">Body Temperature</div>
+            </div>
+
+            <div class="sensor-card">
+                <div class="sensor-header">
+                    <span class="sensor-icon">💓</span>
+                    <span class="sensor-status"></span>
+                </div>
+                <div class="sensor-value" id="heartrate">--</div>
+                <div class="sensor-label">Heart Rate</div>
+            </div>
+
+            <div class="sensor-card">
+                <div class="sensor-header">
+                    <span class="sensor-icon">🧪</span>
+                    <span class="sensor-status"></span>
+                </div>
+                <div class="sensor-value" id="ph">--</div>
+                <div class="sensor-label">Sample pH Level</div>
+            </div>
+
+            <div class="sensor-card">
+                <div class="sensor-header">
+                    <span class="sensor-icon">💉</span>
+                    <span class="sensor-status"></span>
+                </div>
+                <div class="sensor-value" id="bp">--</div>
+                <div class="sensor-label">Blood Pressure</div>
+            </div>
+
+            <div class="sensor-card">
+                <div class="sensor-header">
+                    <span class="sensor-icon">🔬</span>
+                    <span class="sensor-status"></span>
+                </div>
+                <div class="sensor-value" id="incubator">37.0°C</div>
+                <div class="sensor-label">Incubator Temperature</div>
+            </div>
+
+            <div class="sensor-card">
+                <div class="sensor-header">
+                    <span class="sensor-icon">💧</span>
+                    <span class="sensor-status"></span>
+                </div>
+                <div class="sensor-value" id="humidity">45%</div>
+                <div class="sensor-label">Lab Humidity</div>
+            </div>
+        </div>
+
+        <!-- Demo Footer -->
+        <div
+            style="margin-top: var(--spacing-3xl); padding: var(--spacing-xl); background: var(--bg-secondary); border-radius: var(--radius-lg); border: 1px solid var(--border-subtle);">
+            <h3 style="margin-bottom: var(--spacing-md); font-size: var(--font-size-lg);">🔬 About This Demo</h3>
+            <p class="text-secondary" style="line-height: 1.6; margin-bottom: var(--spacing-md);">
+                This IoT monitoring interface demonstrates how Proteomorphic could integrate with real-time biosensor
+                data in a clinical setting. The current implementation uses simulated data to showcase:
+            </p>
+            <ul class="text-secondary" style="line-height: 1.8; margin-left: var(--spacing-xl);">
+                <li>Real-time patient vital sign monitoring</li>
+                <li>Dynamic risk calculation based on physiological parameters</li>
+                <li>Integration potential with laboratory equipment and wearable devices</li>
+                <li>Correlation between patient health metrics and protein misfolding risk</li>
+            </ul>
+            <p class="text-secondary" style="line-height: 1.6; margin-top: var(--spacing-md);">
+                <strong>Future Implementation:</strong> In a production environment, this would connect to actual
+                medical-grade sensors, laboratory equipment, and patient monitoring systems via secure APIs and IoT
+                protocols.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Patient condition profiles (baseline + variation)
+        const patientProfiles = {
+            'normal': {
+                name: 'Healthy Patient',
+                tempBase: 37.0,
+                tempVariation: 0.3,
+                hrBase: 70,
+                hrVariation: 5,
+                phBase: 7.4,
+                phVariation: 0.1,
+                bpSysBase: 120,
+                bpSysVariation: 5,
+                bpDiaBase: 80,
+                bpDiaVariation: 3,
+                status: 'Stable - All parameters normal'
+            },
+            'moderate': {
+                name: 'Moderate Risk Patient',
+                tempBase: 37.6,
+                tempVariation: 0.4,
+                hrBase: 85,
+                hrVariation: 8,
+                phBase: 7.3,
+                phVariation: 0.15,
+                bpSysBase: 135,
+                bpSysVariation: 8,
+                bpDiaBase: 85,
+                bpDiaVariation: 5,
+                status: 'Moderate - Some parameters elevated'
+            },
+            'critical': {
+                name: 'High Risk Patient',
+                tempBase: 38.2,
+                tempVariation: 0.5,
+                hrBase: 95,
+                hrVariation: 10,
+                phBase: 7.2,
+                phVariation: 0.2,
+                bpSysBase: 145,
+                bpSysVariation: 10,
+                bpDiaBase: 92,
+                bpDiaVariation: 6,
+                status: 'Critical - Multiple abnormal readings'
+            }
+        };
+
+        // Get patient ID from URL or use default
+        const urlParams = new URLSearchParams(window.location.search);
+        let patientId = urlParams.get('patient') || localStorage.getItem('currentPatientId');
+
+        // Determine patient profile based on ID or random
+        let profile;
+
+        if (!patientId) {
+            // Random patient
+            const profiles = ['normal', 'moderate', 'critical'];
+            const randomProfile = profiles[Math.floor(Math.random() * profiles.length)];
+            profile = patientProfiles[randomProfile];
+            patientId = 'P' + Math.floor(Math.random() * 90000 + 10000);
+        } else {
+            // Determine profile from patient ID
+            const lastDigit = parseInt(patientId.slice(-1));
+
+            if (lastDigit <= 3) {
+                profile = patientProfiles['normal'];
+            } else if (lastDigit <= 7) {
+                profile = patientProfiles['moderate'];
+            } else {
+                profile = patientProfiles['critical'];
+            }
+        }
+
+        // Update patient info
+        document.getElementById('patientId').textContent = patientId + ' (' + profile.name + ')';
+        document.getElementById('patientStatus').textContent = profile.status;
+
+        // Generate realistic varying sensor values
+        function updateSensors() {
+            // Temperature with natural variation
+            const temp = (profile.tempBase + (Math.random() - 0.5) * 2 * profile.tempVariation).toFixed(1);
+
+            // Heart rate with natural variation
+            const hr = Math.floor(profile.hrBase + (Math.random() - 0.5) * 2 * profile.hrVariation);
+
+            // pH with natural variation
+            const ph = (profile.phBase + (Math.random() - 0.5) * 2 * profile.phVariation).toFixed(2);
+
+            // Blood pressure with natural variation
+            const bpSys = Math.floor(profile.bpSysBase + (Math.random() - 0.5) * 2 * profile.bpSysVariation);
+            const bpDia = Math.floor(profile.bpDiaBase + (Math.random() - 0.5) * 2 * profile.bpDiaVariation);
+
+            // Update display
+            document.getElementById('temp').textContent = temp + '°C';
+            document.getElementById('heartrate').textContent = hr + ' BPM';
+            document.getElementById('ph').textContent = ph;
+            document.getElementById('bp').textContent = bpSys + '/' + bpDia;
+
+            // Calculate risk
+            calculateRisk(parseFloat(temp), hr, parseFloat(ph), bpSys, bpDia);
+        }
+
+        function calculateRisk(temp, hr, ph, bpSys, bpDia) {
+            let risk = 50; // Base risk
+            let factors = [];
+
+            // Temperature factor
+            if (temp > 37.5) {
+                const increase = Math.round((temp - 37.5) * 15);
+                risk += increase;
+                factors.push(`🌡️ Elevated temperature (${temp}°C) +${increase}%`);
+            }
+
+            // pH factor
+            if (ph < 7.3 || ph > 7.5) {
+                risk += 20;
+                factors.push(`🧪 pH outside optimal range (${ph}) +20%`);
+            }
+
+            // Heart rate factor
+            if (hr > 90) {
+                const increase = Math.round((hr - 90) / 2);
+                risk += increase;
+                factors.push(`💓 Elevated stress markers (${hr} BPM) +${increase}%`);
+            }
+
+            // Blood pressure factor
+            if (bpSys > 140 || bpDia > 90) {
+                risk += 10;
+                factors.push(`💉 High blood pressure (${bpSys}/${bpDia}) +10%`);
+            }
+
+            // Cap at 100%
+            risk = Math.min(risk, 100);
+
+            // Update display
+            const riskValueEl = document.getElementById('riskValue');
+            riskValueEl.textContent = risk + '%';
+
+            // Update color
+            riskValueEl.className = 'risk-value ' + (risk > 80 ? 'risk-high' : risk > 60 ? 'risk-medium' : 'risk-low');
+
+            // Update level text
+            const levelText = risk > 80 ? '🔴 HIGH RISK - Immediate intervention recommended' : risk > 60 ? '🟡 MEDIUM RISK - Monitor closely' : '🟢 LOW RISK - All parameters normal';
+            document.getElementById('riskLevel').textContent = levelText;
+
+            // Update factors
+            if (factors.length > 0) {
+                document.getElementById('riskFactors').innerHTML = factors.join('<br>');
+            } else {
+                document.getElementById('riskFactors').textContent = '✅ All parameters within normal range';
+            }
+        }
+
+        // Update every 3 seconds with realistic variations
+        setInterval(updateSensors, 3000);
+        updateSensors(); // Initial update
+    </script>
+</body>
+
+</html>
