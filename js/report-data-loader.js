@@ -175,8 +175,11 @@
         // ========================================
         // 3. SECONDARY STRUCTURE COMPOSITION
         // ========================================
+        console.log('🔍 Checking for structure data...');
+        console.log('Analysis Data:', analysisData);
+
         if (analysisData.structure) {
-            console.log('📊 Structure data:', analysisData.structure);
+            console.log('✅ Structure data found:', analysisData.structure);
             const allCards = document.querySelectorAll('.card');
             let structureCard = null;
 
@@ -188,17 +191,31 @@
             }
 
             if (structureCard) {
+                console.log('✅ Structure card found');
                 const infoGrid = structureCard.querySelector('.info-grid');
                 if (infoGrid) {
+                    console.log('✅ Info grid found');
+
                     // Alpha Helix - handle undefined, null, or 0
                     const alphaValue = analysisData.structure.alphaHelix ?? 0;
                     const helixDiv = infoGrid.querySelector('div:nth-child(1)');
                     if (helixDiv) {
                         const helixText = helixDiv.querySelector('strong');
                         const helixBar = helixDiv.querySelector('.progress-bar');
-                        if (helixText) helixText.textContent = `${alphaValue}%`;
-                        if (helixBar) helixBar.style.width = `${alphaValue}%`;
-                        console.log('✅ Alpha Helix updated:', alphaValue);
+                        if (helixText) {
+                            helixText.textContent = `${alphaValue}%`;
+                            console.log(`✅ Alpha Helix updated to: ${alphaValue}%`);
+                        } else {
+                            console.error('❌ Alpha Helix text element not found');
+                        }
+                        if (helixBar) {
+                            helixBar.style.width = `${alphaValue}%`;
+                            console.log(`✅ Alpha Helix bar width set to: ${alphaValue}%`);
+                        } else {
+                            console.error('❌ Alpha Helix progress bar not found');
+                        }
+                    } else {
+                        console.error('❌ Alpha Helix div not found');
                     }
 
                     // Beta Sheet - handle undefined, null, or 0
@@ -207,14 +224,30 @@
                     if (sheetDiv) {
                         const sheetText = sheetDiv.querySelector('strong');
                         const sheetBar = sheetDiv.querySelector('.progress-bar');
-                        if (sheetText) sheetText.textContent = `${betaValue}%`;
-                        if (sheetBar) sheetBar.style.width = `${betaValue}%`;
-                        console.log('✅ Beta Sheet updated:', betaValue);
+                        if (sheetText) {
+                            sheetText.textContent = `${betaValue}%`;
+                            console.log(`✅ Beta Sheet updated to: ${betaValue}%`);
+                        } else {
+                            console.error('❌ Beta Sheet text element not found');
+                        }
+                        if (sheetBar) {
+                            sheetBar.style.width = `${betaValue}%`;
+                            console.log(`✅ Beta Sheet bar width set to: ${betaValue}%`);
+                        } else {
+                            console.error('❌ Beta Sheet progress bar not found');
+                        }
+                    } else {
+                        console.error('❌ Beta Sheet div not found');
                     }
+                } else {
+                    console.error('❌ Info grid not found in structure card');
                 }
+            } else {
+                console.error('❌ Structure card not found');
             }
         } else {
-            console.warn('⚠️ No structure data available in analysisData');
+            console.error('❌ No structure data available in analysisData');
+            console.log('Available keys:', Object.keys(analysisData));
         }
 
         // ========================================
