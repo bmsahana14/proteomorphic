@@ -4,30 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comprehensive Report | Proteomorphic</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Analysis Report | Proteomorphic</title>
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/components.css">
-    <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.0.4/3Dmol-min.js"></script>
     <style>
-        body {
-            padding-top: 80px;
-        }
-
         .report-container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: var(--spacing-2xl);
+            padding: var(--spacing-xl);
         }
 
         .report-header {
             text-align: center;
-            padding: var(--spacing-3xl) 0;
-            border-bottom: 2px solid var(--border-medium);
-            margin-bottom: var(--spacing-2xl);
+            margin-bottom: var(--spacing-3xl);
+            padding-bottom: var(--spacing-xl);
+            border-bottom: 1px solid var(--border-subtle);
         }
 
         .report-section {
@@ -35,15 +29,41 @@
         }
 
         .section-title {
-            font-size: var(--font-size-2xl);
+            font-size: 1.5rem;
+            color: var(--text-primary);
             margin-bottom: var(--spacing-lg);
-            padding-bottom: var(--spacing-sm);
-            border-bottom: 1px solid var(--border-subtle);
+            padding-left: var(--spacing-md);
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        .risk-meter {
+            height: 24px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .risk-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-success), var(--accent-warning), var(--accent-danger));
+            width: 0%;
+            transition: width 1s ease-out;
+        }
+
+        .risk-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 600;
+            color: var(--text-primary);
+            text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
         }
 
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: var(--spacing-lg);
         }
 
@@ -53,60 +73,40 @@
             border-radius: var(--radius-md);
         }
 
-        .risk-meter {
-            width: 100%;
-            height: 40px;
-            background: var(--bg-secondary);
-            border-radius: var(--radius-full);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .risk-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-green), var(--accent-orange), var(--accent-red));
-            transition: width 1s ease;
-        }
-
-        .risk-indicator {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            right: var(--spacing-md);
-            font-weight: 700;
-            color: white;
-        }
-
         #protein-viewer {
-            height: 400px;
             width: 100%;
+            height: 400px;
+            background: white;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
             position: relative;
-            background: var(--bg-secondary);
-            border-radius: var(--radius-lg);
         }
 
         @media print {
-            .no-print {
+
+            .navbar,
+            .btn {
                 display: none;
             }
 
-            body {
-                background: white;
-                color: black;
+            .report-container {
+                width: 100%;
+                max-width: none;
+                padding: 0;
             }
 
-            #protein-viewer {
-                display: none;
+            .card {
+                border: 1px solid #ddd;
+                break-inside: avoid;
             }
         }
     </style>
 </head>
 
 <body>
-    <nav class="navbar no-print">
-        <div class="container navbar-content">
-            <a href="../index.html" class="navbar-logo"
-                style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem;">
+    <nav class="navbar">
+        <div class="container flex justify-between items-center">
+            <a href="../index.html" class="logo flex items-center gap-sm">
                 <img src="../logo.png" alt="Proteomorphic" style="height: 32px; width: 32px; object-fit: contain;">
                 <span>Proteomorphic</span>
             </a>
@@ -126,7 +126,7 @@
         <div class="report-header">
             <h1 class="text-gradient">Proteomorphic</h1>
             <h2>Comprehensive Protein Misfolding Analysis Report</h2>
-            <p class="text-secondary mt-md">Generated: <span id="reportDate"></span></p>
+            <p class="text-secondary mt-md">Generated: <span id="reportDate">Loading...</span></p>
         </div>
 
         <!-- Executive Summary -->
@@ -136,15 +136,15 @@
                 <div class="info-grid">
                     <div class="info-item">
                         <p class="text-secondary mb-sm">Patient/Protein ID</p>
-                        <strong id="reportId">APP-2025-001</strong>
+                        <strong id="reportId">Loading...</strong>
                     </div>
                     <div class="info-item">
                         <p class="text-secondary mb-sm">Analysis Date</p>
-                        <strong id="analysisDate">November 20, 2025</strong>
+                        <strong id="analysisDate">Loading...</strong>
                     </div>
                     <div class="info-item">
                         <p class="text-secondary mb-sm">Protein Name</p>
-                        <strong id="proteinName">Amyloid Beta Precursor Protein (APP)</strong>
+                        <strong id="proteinName">Loading...</strong>
                     </div>
                     <div class="info-item">
                         <p class="text-secondary mb-sm">Organism</p>
@@ -156,20 +156,17 @@
             <div class="card">
                 <h3 class="mb-md">Overall Misfolding Risk Score</h3>
                 <div class="risk-meter mb-md">
-                    <div class="risk-fill" style="width: 78%" id="riskFill"></div>
-                    <div class="risk-indicator" id="riskScore">78/100</div>
+                    <div class="risk-fill" style="width: 0%" id="riskFill"></div>
+                    <div class="risk-indicator" id="riskScore">Calculating...</div>
                 </div>
                 <div class="flex gap-md">
-                    <span class="badge badge-danger" id="riskLevel">High Risk</span>
-                    <span class="badge badge-warning">Urgent Clinical Review Recommended</span>
+                    <span class="badge badge-secondary" id="riskLevel">Analyzing...</span>
+                    <span class="badge badge-warning" style="display: none;">Urgent Clinical Review Recommended</span>
                 </div>
                 <div class="mt-lg">
                     <h4 class="mb-sm">Key Findings:</h4>
-                    <ul style="color: var(--text-secondary); line-height: 1.8;">
-                        <li>Significant structural abnormalities detected in beta-sheet regions</li>
-                        <li>Two high-confidence misfolding hotspots identified (R175H, G245S)</li>
-                        <li>Strong association with early-onset Alzheimer's disease</li>
-                        <li>CRISPR intervention protocol available with 85% success probability</li>
+                    <ul class="findings-list" style="color: var(--text-secondary); line-height: 1.8;">
+                        <li>Loading analysis data...</li>
                     </ul>
                 </div>
             </div>
@@ -182,7 +179,7 @@
                 <h3 class="mb-md">3D Structure Visualization</h3>
                 <div id="protein-viewer"></div>
                 <p class="text-tertiary mt-sm" style="font-size: var(--font-size-sm); text-align: center;">
-                    PDB ID: 1AAP | Interactive: Rotate with mouse, scroll to zoom
+                    Interactive: Rotate with mouse, scroll to zoom
                 </p>
             </div>
 
@@ -192,19 +189,19 @@
                     <div>
                         <div class="flex justify-between mb-sm">
                             <span>Alpha Helix</span>
-                            <strong class="text-gradient">45%</strong>
+                            <strong class="text-gradient">--%</strong>
                         </div>
                         <div class="progress">
-                            <div class="progress-bar" style="width: 45%"></div>
+                            <div class="progress-bar" style="width: 0%"></div>
                         </div>
                     </div>
                     <div>
                         <div class="flex justify-between mb-sm">
                             <span>Beta Sheet</span>
-                            <strong class="text-gradient">30%</strong>
+                            <strong class="text-gradient">--%</strong>
                         </div>
                         <div class="progress">
-                            <div class="progress-bar" style="width: 30%"></div>
+                            <div class="progress-bar" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
@@ -223,20 +220,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><code>R175H</code></td>
-                            <td>175</td>
-                            <td><span class="badge badge-danger">High</span></td>
-                            <td>95%</td>
-                            <td>Disrupts hydrogen bonding network</td>
-                        </tr>
-                        <tr>
-                            <td><code>G245S</code></td>
-                            <td>245</td>
-                            <td><span class="badge badge-warning">Medium</span></td>
-                            <td>87%</td>
-                            <td>Increases aggregation propensity</td>
-                        </tr>
+                        <!-- Dynamic Content -->
                     </tbody>
                 </table>
             </div>
@@ -247,52 +231,43 @@
             <h2 class="section-title">Clinical Interpretation</h2>
             <div class="card mb-lg">
                 <h3 class="mb-md">Disease Association</h3>
-                <div class="alert alert-danger mb-md">
-                    <strong>Primary Association:</strong> Early-Onset Alzheimer's Disease (EOAD)
+                <div class="alert alert-secondary mb-md" id="diseaseAlert">
+                    <strong>Status:</strong> Analyzing clinical data...
                 </div>
-                <p class="text-secondary mb-md">
-                    The identified mutations in the APP gene are strongly associated with familial Alzheimer's disease.
-                    The R175H mutation has been documented in multiple case studies showing accelerated amyloid-beta
-                    aggregation.
+                <p class="text-secondary mb-md" id="diseaseDescription">
+                    Loading disease association data...
                 </p>
                 <h4 class="mb-sm">Pathogenicity Assessment:</h4>
-                <ul style="color: var(--text-secondary); line-height: 1.8;">
-                    <li><strong>ClinVar Classification:</strong> Pathogenic</li>
-                    <li><strong>ACMG Criteria:</strong> PS3, PM1, PM2, PP3 (Likely Pathogenic)</li>
-                    <li><strong>Population Frequency:</strong> Extremely rare (< 0.001%)</li>
+                <ul style="color: var(--text-secondary); line-height: 1.8;" id="pathogenicityList">
+                    <li>Loading...</li>
                 </ul>
             </div>
         </section>
 
         <!-- CRISPR Intervention Protocol -->
-        <section class="report-section">
+        <section class="report-section crispr-section">
             <h2 class="section-title">CRISPR Intervention Protocol</h2>
             <div class="card mb-lg">
                 <h3 class="mb-md">Guide RNA Design</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>gRNA Sequence</th>
-                            <th>Target Site</th>
-                            <th>Efficiency</th>
-                            <th>Off-Targets</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>GCTAGCTAGCTAGCTAGCTA</code></td>
-                            <td>Exon 5</td>
-                            <td><span class="badge badge-success">92%</span></td>
-                            <td>2</td>
-                        </tr>
-                        <tr>
-                            <td><code>ATCGATCGATCGATCGATCG</code></td>
-                            <td>Exon 5</td>
-                            <td><span class="badge badge-success">88%</span></td>
-                            <td>1</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div style="overflow-x: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>gRNA Sequence</th>
+                                <th>Target Site</th>
+                                <th>Efficiency</th>
+                                <th>Off-Targets</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-secondary mt-md">
+                    <strong>Note:</strong> These guide RNAs are designed to target the mutant allele specifically.
+                    Validation in patient-derived iPSCs is recommended before clinical application.
+                </p>
             </div>
         </section>
 
@@ -310,288 +285,46 @@
     <script src="../js/auth.js"></script>
     <script src="../js/report-data-loader.js"></script>
     <script>
-        // Auth Check - Modified for better compatibility
+        // Auth Check
         if (typeof Auth !== 'undefined') {
-            ```html
-            </div>
-        </div>
-    </nav>
-
-    <div class="report-container" id="reportContent">
-        <!-- Header -->
-        <div class="report-header">
-            <h1 class="text-gradient">Proteomorphic</h1>
-            <h2>Comprehensive Protein Misfolding Analysis Report</h2>
-            <p class="text-secondary mt-md">Generated: <span id="reportDate"></span></p>
-        </div>
-
-        <!-- Executive Summary -->
-        <section class="report-section">
-            <h2 class="section-title">Executive Summary</h2>
-            <div class="card mb-lg">
-                <div class="info-grid">
-                    <div class="info-item">
-                        <p class="text-secondary mb-sm">Patient/Protein ID</p>
-                        <strong id="reportId">APP-2025-001</strong>
-                    </div>
-                    <div class="info-item">
-                        <p class="text-secondary mb-sm">Analysis Date</p>
-                        <strong id="analysisDate">November 20, 2025</strong>
-                    </div>
-                    <div class="info-item">
-                        <p class="text-secondary mb-sm">Protein Name</p>
-                        <strong id="proteinName">Amyloid Beta Precursor Protein (APP)</strong>
-                    </div>
-                    <div class="info-item">
-                        <p class="text-secondary mb-sm">Organism</p>
-                        <strong>Homo sapiens</strong>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 class="mb-md">Overall Misfolding Risk Score</h3>
-                <div class="risk-meter mb-md">
-                    <div class="risk-fill" style="width: 78%" id="riskFill"></div>
-                    <div class="risk-indicator" id="riskScore">78/100</div>
-                </div>
-                <div class="flex gap-md">
-                    <span class="badge badge-danger" id="riskLevel">High Risk</span>
-                    <span class="badge badge-warning">Urgent Clinical Review Recommended</span>
-                </div>
-                <div class="mt-lg">
-                    <h4 class="mb-sm">Key Findings:</h4>
-                    <ul style="color: var(--text-secondary); line-height: 1.8;">
-                        <li>Significant structural abnormalities detected in beta-sheet regions</li>
-                        <li>Two high-confidence misfolding hotspots identified (R175H, G245S)</li>
-                        <li>Strong association with early-onset Alzheimer's disease</li>
-                        <li>CRISPR intervention protocol available with 85% success probability</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- Structural Analysis -->
-        <section class="report-section">
-            <h2 class="section-title">Structural Analysis Results</h2>
-            <div class="card mb-lg">
-                <h3 class="mb-md">3D Structure Visualization</h3>
-                <div id="protein-viewer"></div>
-                <p class="text-tertiary mt-sm" style="font-size: var(--font-size-sm); text-align: center;">
-                    PDB ID: 1AAP | Interactive: Rotate with mouse, scroll to zoom
-                </p>
-            </div>
-
-            <div class="card mb-lg">
-                <h3 class="mb-md">Secondary Structure Composition</h3>
-                <div class="info-grid">
-                    <div>
-                        <div class="flex justify-between mb-sm">
-                            <span>Alpha Helix</span>
-                            <strong class="text-gradient">45%</strong>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 45%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-sm">
-                            <span>Beta Sheet</span>
-                            <strong class="text-gradient">30%</strong>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 30%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 class="mb-md">Misfolding Hotspots</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Residue Mutation</th>
-                            <th>Position</th>
-                            <th>Severity</th>
-                            <th>Confidence</th>
-                            <th>Impact</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>R175H</code></td>
-                            <td>175</td>
-                            <td><span class="badge badge-danger">High</span></td>
-                            <td>95%</td>
-                            <td>Disrupts hydrogen bonding network</td>
-                        </tr>
-                        <tr>
-                            <td><code>G245S</code></td>
-                            <td>245</td>
-                            <td><span class="badge badge-warning">Medium</span></td>
-                            <td>87%</td>
-                            <td>Increases aggregation propensity</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Clinical Interpretation -->
-        <section class="report-section">
-            <h2 class="section-title">Clinical Interpretation</h2>
-            <div class="card mb-lg">
-                <h3 class="mb-md">Disease Association</h3>
-                <div class="alert alert-danger mb-md">
-                    <strong>Primary Association:</strong> Early-Onset Alzheimer's Disease (EOAD)
-                </div>
-                <p class="text-secondary mb-md">
-                    The identified mutations in the APP gene are strongly associated with familial Alzheimer's disease.
-                    The R175H mutation has been documented in multiple case studies showing accelerated amyloid-beta
-                    aggregation.
-                </p>
-                <h4 class="mb-sm">Pathogenicity Assessment:</h4>
-                <ul style="color: var(--text-secondary); line-height: 1.8;">
-                    <li><strong>ClinVar Classification:</strong> Pathogenic</li>
-                    <li><strong>ACMG Criteria:</strong> PS3, PM1, PM2, PP3 (Likely Pathogenic)</li>
-                    <li><strong>Population Frequency:</strong> Extremely rare (< 0.001%)</li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- CRISPR Intervention Protocol -->
-        <section class="report-section">
-            <h2 class="section-title">CRISPR Intervention Protocol</h2>
-            <div class="card mb-lg">
-                <h3 class="mb-md">Guide RNA Design</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>gRNA Sequence</th>
-                            <th>Target Site</th>
-                            <th>Efficiency</th>
-                            <th>Off-Targets</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>GCTAGCTAGCTAGCTAGCTA</code></td>
-                            <td>Exon 5</td>
-                            <td><span class="badge badge-success">92%</span></td>
-                            <td>2</td>
-                        </tr>
-                        <tr>
-                            <td><code>ATCGATCGATCGATCGATCG</code></td>
-                            <td>Exon 5</td>
-                            <td><span class="badge badge-success">88%</span></td>
-                            <td>1</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <div
-            style="text-align: center; padding: var(--spacing-2xl) 0; border-top: 1px solid var(--border-subtle); margin-top: var(--spacing-3xl);">
-            <p class="text-secondary" style="font-size: var(--font-size-sm);">
-                This report was generated by Proteomorphic AI Analysis Platform<br>
-                For research and clinical decision support purposes only<br>
-                © 2025 Proteomorphic. All rights reserved.
-            </p>
-        </div>
-    </div>
-
-    <script src="../js/auth.js"></script>
-    <script src="../js/report-data-loader.js"></script>
-    <script>
-        // Auth Check - Modified for better compatibility
-        if (typeof Auth !== 'undefined') {
-            // Check if authenticated, but don't redirect if running locally
-            const isAuth = Auth.isAuthenticated();
-            if (!isAuth) {
-                console.log('Not authenticated - allowing demo view');
-            }
+            Auth.requireAuth();
         }
 
-        // Initialize 3D viewer with dynamic protein loading
-        document.addEventListener('DOMContentLoaded', function () {
-            // Set current date
-            document.getElementById('reportDate').textContent = new Date().toLocaleDateString();
-
-            // Get protein name from analysis data
-            let proteinName = 'Amyloid Beta'; // Default
-            let pdbId = '1AAP'; // Default PDB ID
-
-            try {
-                const storedAnalysis = localStorage.getItem('currentAnalysis');
-                if (storedAnalysis) {
-                    const analysisData = JSON.parse(storedAnalysis);
-                    if (analysisData.proteinName) {
-                        proteinName = analysisData.proteinName;
-                    }
-                }
-            } catch (error) {
-                console.log('Using default protein');
-            }
-
-            // Map protein names to PDB IDs
-            const proteinPDBMap = {
-                // Neurodegenerative disease proteins
-                'amyloid': '1AAP',
-                'app': '1AAP',
-                'amyloid beta': '1AAP',
-                'tau': '5O3L',
-                'alpha-synuclein': '1XQ8',
-                'synuclein': '1XQ8',
-                'huntingtin': '4FE8',
-                'prion': '1QLX',
-                'prp': '1QLX',
-                'sod1': '1SPD',
-                'tdp-43': '4BS2',
-                'fus': '5W3N',
-                
-                // Common proteins
-                'insulin': '1MSO',
-                'hemoglobin': '1HHO',
-                'myoglobin': '1MBO',
-                'lysozyme': '1LYZ',
-                'cytochrome': '1HRC',
-                'ubiquitin': '1UBQ',
-                'p53': '1TUP',
-                'egfr': '1M17',
-                'her2': '3PP0',
-                'bcl-2': '1G5M'
-            };
-
-            // Find matching PDB ID
-            const lowerProteinName = proteinName.toLowerCase();
-            for (const [key, value] of Object.entries(proteinPDBMap)) {
-                if (lowerProteinName.includes(key)) {
-                    pdbId = value;
-                    break;
-                }
-            }
-
-            console.log(`Loading 3D structure for: ${ proteinName } (PDB: ${ pdbId })`);
-
-            // Initialize 3D viewer
+        // Initialize 3D Viewer
+        document.addEventListener('DOMContentLoaded', () => {
             const element = document.getElementById('protein-viewer');
-            if (element) {
+            if (element && typeof $3Dmol !== 'undefined') {
                 const config = { backgroundColor: 'white' };
                 const viewer = $3Dmol.createViewer(element, config);
 
-                // Fetch protein structure based on protein name
-                $3Dmol.download(`pdb:${ pdbId }`, viewer, {}, function () {
-                    viewer.setStyle({}, {
-                        cartoon: {
-                            color: 'spectrum'
+                // Load PDB (Expanded Map)
+                const pdbMap = {
+                    'app': '1AAP', 'amyloid': '1AAP', 'tau': '1JQJ', 'mapt': '1JQJ',
+                    'synuclein': '1XQ8', 'snca': '1XQ8', 'parkin': '1BRP',
+                    'huntingtin': '3IO4', 'htt': '3IO4', 'sod1': '1SPD',
+                    'tdp-43': '4BS2', 'fus': '5W3N', 'cftr': '1XMI',
+                    'hemoglobin': '1HHO', 'myoglobin': '1MBN', 'insulin': '1TRZ',
+                    'bdnf': '1BND', 'ngf': '1BET', 'p53': '1TUP', 'brca': '1JM7'
+                };
+
+                // Get protein name from local storage to pick PDB
+                let pdbId = '1AAP'; // Default
+                try {
+                    const data = JSON.parse(localStorage.getItem('currentAnalysis') || '{}');
+                    const pName = (data.proteinName || '').toLowerCase();
+
+                    for (const key in pdbMap) {
+                        if (pName.includes(key)) {
+                            pdbId = pdbMap[key];
+                            break;
                         }
-                    });
+                    }
+                } catch (e) { console.error('Error getting PDB:', e); }
+
+                $3Dmol.download(`pdb:${pdbId}`, viewer, { multimodel: true, frames: true }, function () {
+                    viewer.setStyle({}, { cartoon: { color: 'spectrum' } });
                     viewer.zoomTo();
                     viewer.render();
-                    viewer.rotate(1, 'y');
                 });
             }
         });
@@ -599,4 +332,3 @@
 </body>
 
 </html>
-```

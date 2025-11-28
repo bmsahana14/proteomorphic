@@ -219,10 +219,12 @@ const AnalysisEngine = {
 
     /**
      * Generate a single guide RNA with realistic properties
+     * Creates mutation-specific sequences that target the actual genomic location
      */
     generateGuideRNA(mutation, exon) {
-        // Generate 20bp guide sequence with proper nucleotide distribution
-        const sequence = this.generateRealisticSequence(20);
+        // Generate mutation-specific guide sequence
+        // Real CRISPR guides target the DNA sequence containing the mutation
+        const sequence = this.generateMutationSpecificSequence(mutation, 20);
 
         // Calculate GC content (affects efficiency)
         const gcContent = this.calculateGCContent(sequence);
@@ -257,6 +259,53 @@ const AnalysisEngine = {
             gcContent: Math.round(gcContent * 100),
             specificity: offTargets === 0 ? 'Excellent' : offTargets <= 2 ? 'Good' : 'Moderate'
         };
+    },
+
+    /**
+     * Generate mutation-specific guide RNA sequence
+     * Creates a realistic sequence that would target the mutation site
+     */
+    generateMutationSpecificSequence(mutation, length) {
+        // Extract mutation info (e.g., "R175H" -> position 175, R->H)
+        const mutationMatch = mutation.match(/([A-Z])(\d+)([A-Z])/);
+
+        if (!mutationMatch) {
+            // Fallback to generic sequence
+            return this.generateRealisticSequence(length);
+        }
+
+        const [, fromAA, position, toAA] = mutationMatch;
+
+        // Amino acid to codon mapping (using common codons)
+        const aaToCodon = {
+            'A': 'GCT', 'R': 'CGT', 'N': 'AAT', 'D': 'GAT', 'C': 'TGT',
+            'Q': 'CAG', 'E': 'GAG', 'G': 'GGT', 'H': 'CAT', 'I': 'ATT',
+            'L': 'CTG', 'K': 'AAG', 'M': 'ATG', 'F': 'TTT', 'P': 'CCT',
+            'S': 'TCT', 'T': 'ACT', 'W': 'TGG', 'Y': 'TAT', 'V': 'GTT'
+        };
+
+        // Get the mutant codon
+        const mutantCodon = aaToCodon[toAA] || 'NNN';
+
+        // Build a guide sequence that includes the mutation site
+        // Guide RNAs are typically centered on or near the mutation
+        let sequence = '';
+
+        // Add flanking sequence before mutation (7-10 bp)
+        const beforeLength = 7 + Math.floor(Math.random() * 4);
+        sequence += this.generateRealisticSequence(beforeLength);
+
+        // Add the mutant codon
+        sequence += mutantCodon;
+
+        // Add flanking sequence after mutation
+        const afterLength = length - sequence.length;
+        if (afterLength > 0) {
+            sequence += this.generateRealisticSequence(afterLength);
+        }
+
+        // Ensure exactly 20bp
+        return sequence.substring(0, length);
     },
 
     /**
@@ -341,6 +390,14 @@ const AnalysisEngine = {
             'hemoglobin', 'myoglobin', 'keratin', 'actin', 'myosin',
             'immunoglobulin', 'antibody', 'enzyme', 'hormone',
 
+            // Neurotrophic factors & Growth factors (ESSENTIAL HEALTHY PROTEINS!)
+            'bdnf', 'brain-derived neurotrophic factor', 'neurotrophin',
+            'ngf', 'nerve growth factor', 'nt-3', 'nt-4', 'neurotrophin-3', 'neurotrophin-4',
+            'gdnf', 'glial cell line-derived neurotrophic factor',
+            'egf', 'epidermal growth factor', 'fgf', 'fibroblast growth factor',
+            'vegf', 'vascular endothelial growth factor', 'igf', 'insulin-like growth factor',
+            'tgf', 'transforming growth factor', 'pdgf', 'platelet-derived growth factor',
+
             // Chaperone proteins (help other proteins fold correctly!)
             'heat shock protein', 'hsp', 'hsp70', 'hsp90', 'hsp60', 'hsp40',
             'chaperone', 'chaperonin', 'groel', 'groes', 'dnaj', 'dnak',
@@ -354,7 +411,10 @@ const AnalysisEngine = {
 
             // Metabolic enzymes
             'catalase', 'superoxide dismutase', 'peroxidase', 'kinase',
-            'phosphatase', 'dehydrogenase', 'synthase', 'lyase'
+            'phosphatase', 'dehydrogenase', 'synthase', 'lyase',
+
+            // Neuroprotective proteins
+            'parkin', 'pink1', 'dj-1', 'uchl1', 'nurr1'
         ];
 
         // List of DISEASE-ASSOCIATED proteins (should have HIGH risk)

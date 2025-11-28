@@ -1,0 +1,18 @@
+# Core Web Framework
+flask==3.0.0
+flask-cors==4.0.0
+
+# AI/ML - ESM-2 for protein analysis
+torch>=2.0.0
+transformers>=4.35.0
+
+# Data Science (no compilation needed)
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Utilities
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# Note: BioPython and Biotite removed due to C++ compiler requirement
+# The backend will work without them using ESM-2 only
