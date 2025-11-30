@@ -1,6 +1,9 @@
 # Proteomorphic - .gitignore
 # Files to exclude from GitHub repository
 
+# Ignore all markdown files as requested
+*.md
+
 # ==========================================
 # Documentation Files (Keep Local Only)
 # ==========================================

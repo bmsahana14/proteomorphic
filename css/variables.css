@@ -18,6 +18,14 @@
   --accent-red: hsl(350, 89%, 60%);
   --accent-pink: hsl(328, 85%, 65%);
 
+  /* Risk Meter Gradient Colors */
+  --accent-success: #10B981;
+  /* Green for low risk */
+  --accent-warning: #FBBF24;
+  /* Yellow for medium risk */
+  --accent-danger: #F43F5E;
+  /* Red for high risk */
+
   --warning: #FBBF24;
   --error: #F43F5E;
   --success: #10B981;

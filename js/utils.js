@@ -166,11 +166,16 @@ const AnalysisEngine = {
             'htt': { gene: 'HTT', exons: [1], mutations: ['CAG-repeat'] },
             'prion': { gene: 'PRNP', exons: [2], mutations: ['D178N', 'E200K', 'V210I'] },
             'prp': { gene: 'PRNP', exons: [2], mutations: ['D178N', 'E200K', 'V210I'] },
-            'sod1': { gene: 'SOD1', exons: [4, 5], mutations: ['A4V', 'D90A', 'G93A'] }
+            'sod1': { gene: 'SOD1', exons: [4, 5], mutations: ['A4V', 'D90A', 'G93A'] },
+            'p53': { gene: 'TP53', exons: [5, 6, 7, 8], mutations: ['R175H', 'R248Q', 'R273H'] },
+            'tp53': { gene: 'TP53', exons: [5, 6, 7, 8], mutations: ['R175H', 'R248Q', 'R273H'] },
+            'brca': { gene: 'BRCA1', exons: [11], mutations: ['185delAG', '5382insC'] },
+            'cftr': { gene: 'CFTR', exons: [10], mutations: ['F508del'] },
+            'hemoglobin': { gene: 'HBB', exons: [1, 2], mutations: ['E6V'] }
         };
 
         // Get gene info for this protein
-        let geneInfo = { gene: 'Unknown', exons: [5], mutations: ['Unknown'] };
+        let geneInfo = { gene: proteinName ? proteinName.split(' ')[0].toUpperCase() : 'Unknown', exons: [5], mutations: ['Unknown'] };
         for (const [key, value] of Object.entries(proteinGeneMap)) {
             if (protein.includes(key)) {
                 geneInfo = value;
@@ -421,7 +426,7 @@ const AnalysisEngine = {
         const diseaseProteins = [
             'amyloid', 'app', 'tau', 'mapt', 'synuclein', 'snca',
             'huntingtin', 'htt', 'prion', 'prp', 'sod1', 'tdp-43',
-            'fus', 'ataxin', 'polyglutamine'
+            'fus', 'ataxin', 'polyglutamine', 'cftr', 'brca', 'tp53'
         ];
 
         // Check if protein is healthy/supplement
@@ -482,31 +487,43 @@ const AnalysisEngine = {
 
         const confidence = Math.floor(Math.random() * 20) + 80; // 80-100
 
+        // Generate consistent structure percentages that sum to 100%
+        const alpha = Math.floor(Math.random() * 40) + 20; // 20-60%
+        const beta = Math.floor(Math.random() * (80 - alpha)); // Remaining part
+        const coil = 100 - alpha - beta;
+
         return {
             proteinId: proteinData.proteinName,
             misfoldingRisk,
             confidence,
             riskLevel,
             structure: {
-                alphaHelix: Math.floor(Math.random() * 30) + 30,
-                betaSheet: Math.floor(Math.random() * 25) + 20,
-                randomCoil: Math.floor(Math.random() * 30) + 15
+                alphaHelix: alpha,
+                betaSheet: beta,
+                randomCoil: coil
             },
             hotspots,
             crisprDesign: this.designCRISPRGuides(hotspots, proteinName, isHealthy),
             clinicalData: {
                 diseaseAssociation: isHealthy ? 'No disease association (Healthy protein)' :
-                    isDisease ? 'Early-Onset Alzheimer\'s Disease' :
+                    isDisease ? 'Pathogenic Misfolding Detected' :
                         'Unknown - Requires further investigation',
                 pathogenicity: isHealthy ? 'Benign' : isDisease ? 'Pathogenic' : 'Uncertain Significance',
                 inheritancePattern: isDisease ? 'Autosomal Dominant' : 'N/A',
-                onsetAge: isDisease ? '45-55 years' : 'N/A'
+                onsetAge: isDisease ? 'Variable' : 'N/A'
             }
         };
     }
 };
 
+
 // Export to window
 window.ProjectManager = ProjectManager;
 window.NotificationManager = NotificationManager;
 window.AnalysisEngine = AnalysisEngine;
+
+// Verify exports
+console.log('✅ Utils.js loaded successfully');
+console.log('✅ ProjectManager:', typeof ProjectManager);
+console.log('✅ AnalysisEngine:', typeof AnalysisEngine);
+console.log('✅ NotificationManager:', typeof NotificationManager);

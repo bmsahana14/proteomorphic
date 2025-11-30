@@ -20,6 +20,7 @@
             background: var(--bg-secondary);
             padding: var(--spacing-2xl) 0;
             margin-bottom: var(--spacing-2xl);
+            border-bottom: 1px solid var(--border-subtle);
         }
 
         .stats-grid {
@@ -34,15 +35,81 @@
             border: 1px solid var(--glass-border);
             border-radius: var(--radius-lg);
             padding: var(--spacing-xl);
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(12px);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-glow);
+            border-color: var(--primary);
+        }
+
+        /* Decorative gradients */
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0.8;
+        }
+
+        .stat-card:nth-child(1)::before {
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
+
+        .stat-card:nth-child(2)::before {
+            background: linear-gradient(90deg, var(--accent-danger), var(--error));
+        }
+
+        .stat-card:nth-child(3)::before {
+            background: linear-gradient(90deg, var(--secondary), var(--secondary-light));
+        }
+
+        .stat-card:nth-child(4)::before {
+            background: linear-gradient(90deg, var(--accent-success), var(--success));
+        }
+
+        .stat-card p {
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
         }
 
         .stat-value {
             font-size: var(--font-size-3xl);
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-top: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Add subtle background glow to cards */
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .stat-card:hover::after {
+            opacity: 1;
         }
 
         .projects-grid {
@@ -57,6 +124,7 @@
             border-radius: var(--radius-xl);
             padding: var(--spacing-xl);
             transition: all var(--transition-base);
+            backdrop-filter: blur(10px);
         }
 
         .project-card:hover {
@@ -99,19 +167,19 @@
     <div class="container">
         <div class="stats-grid">
             <div class="stat-card">
-                <p class="text-secondary mb-sm">Total Analyses</p>
+                <p class="mb-sm">Total Analyses</p>
                 <div class="stat-value" id="totalAnalyses">0</div>
             </div>
             <div class="stat-card">
-                <p class="text-secondary mb-sm">High Risk Cases</p>
+                <p class="mb-sm">High Risk Cases</p>
                 <div class="stat-value" id="highRiskCases">0</div>
             </div>
             <div class="stat-card">
-                <p class="text-secondary mb-sm">CRISPR Protocols</p>
+                <p class="mb-sm">CRISPR Protocols</p>
                 <div class="stat-value" id="crisprProtocols">0</div>
             </div>
             <div class="stat-card">
-                <p class="text-secondary mb-sm">Success Rate</p>
+                <p class="mb-sm">Success Rate</p>
                 <div class="stat-value" id="successRate">0%</div>
             </div>
         </div>
@@ -189,201 +257,6 @@
                             <button onclick="deleteProject(${proj.id})" class="btn btn-secondary btn-sm">Delete</button>
                         </div>
                     </div>
-                `;
-            });
-
-            updateStats(projects);
-        }
-
-        function updateStats(projects) {
-            document.getElementById('totalAnalyses').textContent = projects.length;
-
-            const highRisk = projects.filter(p => (p.misfoldingRisk || 0) > 70).length;
-            document.getElementById('highRiskCases').textContent = highRisk;
-
-            const withCRISPR = projects.filter(p => p.crisprDesign).length;
-            document.getElementById('crisprProtocols').textContent = withCRISPR;
-
-            const successRate = projects.length > 0 ? Math.floor((withCRISPR / projects.length) * 100) : 0;
-            document.getElementById('successRate').textContent = successRate + '%';
-        }
-
-        function deleteProject(id) {
-            if (confirm('Are you sure you want to delete this project?')) {
-                ProjectManager.deleteProject(id);
-                loadProjects(document.getElementById('searchInput').value);
-            }
-        }
-        margin - bottom: var(--spacing - 2xl);
-        }
-
-        .stats - grid {
-            display: grid;
-            grid - template - columns: repeat(auto - fit, minmax(250px, 1fr));
-            gap: var(--spacing - lg);
-            margin - bottom: var(--spacing - 2xl);
-        }
-
-        .stat - card {
-            background: var(--glass - bg);
-            border: 1px solid var(--glass - border);
-            border - radius: var(--radius - lg);
-            padding: var(--spacing - xl);
-        }
-
-        .stat - value {
-            font - size: var(--font - size - 3xl);
-            font - weight: 700;
-            background: linear - gradient(135deg, var(--primary - gradient - start), var(--primary - gradient - end));
-            -webkit - background - clip: text;
-            background - clip: text;
-            -webkit - text - fill - color: transparent;
-        }
-
-        .projects - grid {
-            display: grid;
-            grid - template - columns: repeat(auto - fill, minmax(320px, 1fr));
-            gap: var(--spacing - lg);
-        }
-
-        .project - card {
-            background: var(--glass - bg);
-            border: 1px solid var(--glass - border);
-            border - radius: var(--radius - xl);
-            padding: var(--spacing - xl);
-            transition: all var(--transition - base);
-        }
-
-        .project - card:hover {
-            transform: translateY(-4px);
-            border - color: var(--primary);
-            box - shadow: var(--shadow - lg);
-        }
-    </style >
-</head >
-
-            <body>
-    <!-- Navigation -->
-                <nav class="navbar">
-                    <div class="container navbar-content">
-                        <a href="../index.html" class="navbar-logo"
-                            style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem;">
-                            <img src="../logo.png" alt="Proteomorphic" style="height: 32px; width: 32px; object-fit: contain;">
-                                <span>Proteomorphic</span>
-                        </a>
-                        <ul class="navbar-menu">
-                            <li><a href="../index.html" class="navbar-link">Home</a></li>
-                            <li><a href="../knowledge.html" class="navbar-link">Knowledge Center</a></li>
-                            <li><a href="../iot-monitoring.html" class="navbar-link">IoT Monitoring</a></li>
-                            <li><a href="#" onclick="Auth.logout()" class="navbar-link">Logout</a></li>
-                        </ul>
-                        <div class="flex gap-sm">
-                            <span class="text-sm text-secondary" style="align-self: center;">Logged in as <span
-                                id="navUserName">User</span></span>
-                        </div>
-                    </div>
-                </nav>
-
-                <div class="dashboard-header">
-                    <div class="container">
-                        <h1>Welcome back, <span id="userName"></span></h1>
-                        <p class="text-secondary">Manage your protein analysis projects</p>
-                    </div>
-                </div>
-
-                <div class="container">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <p class="text-secondary mb-sm">Total Analyses</p>
-                            <div class="stat-value" id="totalAnalyses">0</div>
-                        </div>
-                        <div class="stat-card">
-                            <p class="text-secondary mb-sm">High Risk Cases</p>
-                            <div class="stat-value" id="highRiskCases">0</div>
-                        </div>
-                        <div class="stat-card">
-                            <p class="text-secondary mb-sm">CRISPR Protocols</p>
-                            <div class="stat-value" id="crisprProtocols">0</div>
-                        </div>
-                        <div class="stat-card">
-                            <p class="text-secondary mb-sm">Success Rate</p>
-                            <div class="stat-value" id="successRate">0%</div>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between items-center mb-xl mt-2xl">
-                        <h2>Recent Projects</h2>
-                        <div class="flex gap-md">
-                            <input type="text" id="searchInput" class="form-input" placeholder="Search projects..."
-                                style="width: 300px;">
-                                <a href="../analysis/input.html" class="btn btn-primary">+ New Analysis</a>
-                        </div>
-                    </div>
-
-                    <div id="noProjects" style="display: none;" class="card text-center">
-                        <h3 class="mb-md">No projects yet</h3>
-                        <p class="text-secondary mb-lg">Start your first protein analysis to see results here</p>
-                        <a href="../analysis/input.html" class="btn btn-primary">Create First Analysis</a>
-                    </div>
-
-                    <div class="projects-grid" id="projectsGrid">
-                        <!-- Projects will be loaded here -->
-                    </div>
-                </div>
-
-                <!-- Simple Auth -->
-                <script src="../js/auth.js"></script>
-    <script src="../js/api-mock.js"></script>
-    <script src="../js/utils.js"></script>
-    <script>
-        // Check authentication
-            if (!Auth.requireAuth()) {
-                // Redirect handled by requireAuth
-            }
-
-            const user = Auth.getCurrentUser();
-            if (user) {
-                document.getElementById('userName').textContent = user.name || user.email.split('@')[0];
-            document.getElementById('navUserName').textContent = user.name || user.email.split('@')[0];
-        }
-
-            function loadProjects(searchQuery = '') {
-                let projects = searchQuery ? ProjectManager.searchProjects(searchQuery) : ProjectManager.getAllProjects();
-
-            const grid = document.getElementById('projectsGrid');
-            const noProjects = document.getElementById('noProjects');
-
-            if (projects.length === 0) {
-                grid.style.display = 'none';
-            noProjects.style.display = 'block';
-            updateStats([]);
-            return;
-            }
-
-            grid.style.display = 'grid';
-            noProjects.style.display = 'none';
-            grid.innerHTML = '';
-
-            projects.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-            projects.forEach(proj => {
-                const risk = proj.misfoldingRisk !== undefined ? proj.misfoldingRisk : (Math.floor(Math.random() * 40) + 60);
-                const riskClass = risk > 80 ? 'danger' : risk > 60 ? 'warning' : 'success';
-            const date = new Date(proj.createdAt).toLocaleDateString();
-
-            grid.innerHTML += `
-            <div class="project-card">
-                <div class="flex justify-between items-center mb-md">
-                    <h3>${proj.proteinName || 'Unknown Protein'}</h3>
-                    <span class="badge badge-${riskClass}">Risk: ${risk}%</span>
-                </div>
-                <p class="text-secondary mb-sm">Patient ID: ${proj.patientId || 'N/A'}</p>
-                <p class="text-secondary mb-md">Created: ${date}</p>
-                <div class="flex gap-sm">
-                    <a href="../report/view.html?id=${proj.id}" class="btn btn-outline btn-sm">View Report</a>
-                    <button onclick="deleteProject(${proj.id})" class="btn btn-secondary btn-sm">Delete</button>
-                </div>
-            </div>
                 `;
             });
 

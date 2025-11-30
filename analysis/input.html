@@ -318,12 +318,21 @@
             btn.innerHTML = 'Analyzing...';
             setTimeout(async () => {
                 try {
+                    console.log('🔵 Starting analysis for:', pn);
                     const ar = await AnalysisEngine.analyzeProtein({ proteinName: pn, proteinSequence: ps });
+                    console.log('✅ Analysis completed:', ar);
                     const pr = ProjectManager.saveProject({ proteinName: pn, proteinSequence: ps, patientId: pid || 'N/A', misfoldingRisk: ar.misfoldingRisk, confidence: ar.confidence, riskLevel: ar.riskLevel, structure: ar.structure, hotspots: ar.hotspots, crisprDesign: ar.crisprDesign, clinicalData: ar.clinicalData, status: 'completed' });
+                    console.log('✅ Project saved:', pr);
                     localStorage.setItem('currentAnalysis', JSON.stringify(pr));
                     alert('Analysis completed!');
-                    window.location.href = '../report/view.html';
-                } catch (e) { alert('Analysis failed'); btn.disabled = false; btn.innerHTML = 'Start Analysis'; }
+                    window.location.href = `../report/view.html?id=${pr.id}`;
+                } catch (e) {
+                    console.error('❌ ANALYSIS FAILED:', e);
+                    console.error('❌ Error message:', e.message);
+                    alert('Analysis failed: ' + e.message);
+                    btn.disabled = false;
+                    btn.innerHTML = 'Start Analysis';
+                }
             }, 2000);
         }
     </script>

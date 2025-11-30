@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proteomorphic - System Architecture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .header .subtitle {
+            font-size: 18px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .architecture-layer {
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .layer-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .layer-presentation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .layer-logic {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .layer-data {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .component-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .component-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .component-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+
+        .card-frontend::before {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .card-backend::before {
+            background: linear-gradient(90deg, #f093fb, #f5576c);
+        }
+
+        .card-api::before {
+            background: linear-gradient(90deg, #fa709a, #fee140);
+        }
+
+        .card-storage::before {
+            background: linear-gradient(90deg, #30cfd0, #330867);
+        }
+
+        .card-iot::before {
+            background: linear-gradient(90deg, #ff6b6b, #ee5a6f);
+        }
+
+        .component-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .component-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .component-desc {
+            font-size: 14px;
+            color: #718096;
+            line-height: 1.6;
+        }
+
+        .component-tech {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 12px;
+            color: #a0aec0;
+            font-weight: 600;
+        }
+
+        .dual-mode-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .mode-section {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 25px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .mode-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .demo-mode {
+            background: linear-gradient(135deg, #ffa751, #ffe259);
+        }
+
+        .ai-mode {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+        }
+
+        .mode-item {
+            background: white;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            font-size: 14px;
+            color: #2d3748;
+        }
+
+        .data-flow {
+            text-align: center;
+            margin: 30px 0;
+            font-size: 36px;
+            color: #667eea;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 40px;
+            padding: 25px;
+            background: #f7fafc;
+            border-radius: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #2d3748;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .dual-mode-container {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 32px;
+            }
+        }
+
+        .arrow-down {
+            text-align: center;
+            font-size: 48px;
+            color: #667eea;
+            margin: 20px 0;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🧬 PROTEOMORPHIC</h1>
+            <p class="subtitle">System Architecture - AI-Powered Protein Misfolding Analysis & CRISPR Therapeutic Design
+                Platform</p>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Frontend Modules</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Analysis Modes</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <div class="stat-number">4</div>
+                <div class="stat-label">External APIs</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                <div class="stat-number">85-92%</div>
+                <div class="stat-label">AI Accuracy</div>
+            </div>
+        </div>
+
+        <div class="arrow-down">↓</div>
+
+        <!-- LAYER 1: Presentation Layer -->
+        <div class="architecture-layer">
+            <div class="layer-title layer-presentation">📱 PRESENTATION LAYER - Frontend UI</div>
+            <div class="components-grid">
+                <div class="component-card card-frontend">
+                    <div class="component-icon">🏠</div>
+                    <div class="component-title">Landing Page</div>
+                    <div class="component-desc">Main entry point with feature showcase, hero section, and navigation
+                    </div>
+                    <div class="component-tech">HTML5 • CSS3 • JavaScript</div>
+                </div>
+
+                <div class="component-card card-frontend">
+                    <div class="component-icon">🔐</div>
+                    <div class="component-title">Authentication</div>
+                    <div class="component-desc">User login, signup, and session management with LocalStorage</div>
+                    <div class="component-tech">auth.js • Session Storage</div>
+                </div>
+
+                <div class="component-card card-frontend">
+                    <div class="component-icon">📊</div>
+                    <div class="component-title">User Dashboard</div>
+                    <div class="component-desc">Analysis history, statistics, and quick action buttons</div>
+                    <div class="component-tech">dashboard/index.html</div>
+                </div>
+
+                <div class="component-card card-frontend">
+                    <div class="component-icon">🔬</div>
+                    <div class="component-title">Analysis Input</div>
+                    <div class="component-desc">Protein input form with UniProt/NCBI/PDB ID support</div>
+                    <div class="component-tech">analysis/input.html</div>
+                </div>
+
+                <div class="component-card card-frontend">
+                    <div class="component-icon">📄</div>
+                    <div class="component-title">Report Viewer</div>
+                    <div class="component-desc">Comprehensive analysis results with 3D visualization and CRISPR design
+                    </div>
+                    <div class="component-tech">report/view.html • 3Dmol.js</div>
+                </div>
+
+                <div class="component-card card-frontend">
+                    <div class="component-icon">📡</div>
+                    <div class="component-title">IoT Monitoring</div>
+                    <div class="component-desc">Real-time sensor data from ESP32 devices</div>
+                    <div class="component-tech">iot-monitoring.html • Web Serial API</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="arrow-down">↓</div>
+
+        <!-- LAYER 2: Application Logic -->
+        <div class="architecture-layer">
+            <div class="layer-title layer-logic">⚙️ APPLICATION LOGIC LAYER - Dual-Mode Processing</div>
+
+            <div class="dual-mode-container">
+                <!-- Demo Mode -->
+                <div class="mode-section">
+                    <div class="mode-title demo-mode">🎮 Demo Mode (JavaScript)</div>
+                    <div class="mode-item">
+                        <strong>Analysis Engine</strong><br>
+                        utils.js - Core analysis algorithms
+                    </div>
+                    <div class="mode-item">
+                        <strong>Risk Assessment</strong><br>
+                        Rule-based protein misfolding calculation (~60% accuracy)
+                    </div>
+                    <div class="mode-item">
+                        <strong>CRISPR Design Module</strong><br>
+                        Guide RNA generation with PAM sequences
+                    </div>
+                    <div class="mode-item">
+                        <strong>Hotspot Detection</strong><br>
+                        Mutation identification and pathogenicity scoring
+                    </div>
+                    <div class="mode-item">
+                        <strong>Report Data Loader</strong><br>
+                        report-data-loader.js - Dynamic report generation
+                    </div>
+                    <div class="mode-item">
+                        <strong>Chatbot Assistant</strong><br>
+                        chatbot.js - Interactive help system
+                    </div>
+                </div>
+
+                <!-- Real AI Mode -->
+                <div class="mode-section">
+                    <div class="mode-title ai-mode">🧠 Real AI Mode (Python Backend)</div>
+                    <div class="mode-item">
+                        <strong>Flask REST API</strong><br>
+                        backend/app.py - RESTful endpoints
+                    </div>
+                    <div class="mode-item">
+                        <strong>ESM-2 Model</strong><br>
+                        facebook/esm2_t33_650M_UR50D (650M parameters)
+                    </div>
+                    <div class="mode-item">
+                        <strong>BioPython Integration</strong><br>
+                        Sequence analysis and structure prediction
+                    </div>
+                    <div class="mode-item">
+                        <strong>PyTorch Deep Learning</strong><br>
+                        Neural network inference engine
+                    </div>
+                    <div class="mode-item">
+                        <strong>AI-Powered Analysis</strong><br>
+                        85-92% accuracy with ML predictions
+                    </div>
+                    <div class="mode-item">
+                        <strong>Mutation-Specific CRISPR</strong><br>
+                        Advanced guide RNA design with codon targeting
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="arrow-down">↓</div>
+
+        <!-- LAYER 3: Data & Services -->
+        <div class="architecture-layer">
+            <div class="layer-title layer-data">💾 DATA & SERVICES LAYER</div>
+
+            <div class="components-grid">
+                <!-- External APIs -->
+                <div class="component-card card-api">
+                    <div class="component-icon">🌐</div>
+                    <div class="component-title">UniProt API</div>
+                    <div class="component-desc">Protein sequence data, metadata, and functional annotations</div>
+                    <div class="component-tech">REST API • HTTPS</div>
+                </div>
+
+                <div class="component-card card-api">
+                    <div class="component-icon">🧬</div>
+                    <div class="component-title">NCBI Protein Database</div>
+                    <div class="component-desc">Alternative protein data source with E-utilities API</div>
+                    <div class="component-tech">REST API • HTTPS</div>
+                </div>
+
+                <div class="component-card card-api">
+                    <div class="component-icon">📐</div>
+                    <div class="component-title">PDB (Protein Data Bank)</div>
+                    <div class="component-desc">3D protein structure files for visualization</div>
+                    <div class="component-tech">Direct Download • PDB Format</div>
+                </div>
+
+                <div class="component-card card-api">
+                    <div class="component-icon">🤖</div>
+                    <div class="component-title">AlphaFold Database</div>
+                    <div class="component-desc">AI-predicted protein structures from DeepMind</div>
+                    <div class="component-tech">Web Links • References</div>
+                </div>
+
+                <!-- Data Storage -->
+                <div class="component-card card-storage">
+                    <div class="component-icon">💿</div>
+                    <div class="component-title">LocalStorage</div>
+                    <div class="component-desc">Client-side persistence for user data and analysis history</div>
+                    <div class="component-tech">Browser API • JSON</div>
+                </div>
+
+                <div class="component-card card-storage">
+                    <div class="component-icon">⚡</div>
+                    <div class="component-title">Session Storage</div>
+                    <div class="component-desc">Temporary session data and authentication tokens</div>
+                    <div class="component-tech">Browser API</div>
+                </div>
+
+                <div class="component-card card-storage">
+                    <div class="component-icon">📊</div>
+                    <div class="component-title">Analysis Results</div>
+                    <div class="component-desc">Structured JSON data for protein analysis reports</div>
+                    <div class="component-tech">JSON Format</div>
+                </div>
+
+                <!-- IoT Components -->
+                <div class="component-card card-iot">
+                    <div class="component-icon">🔌</div>
+                    <div class="component-title">ESP32 Microcontroller</div>
+                    <div class="component-desc">IoT device for real-time patient monitoring</div>
+                    <div class="component-tech">Arduino • C++</div>
+                </div>
+
+                <div class="component-card card-iot">
+                    <div class="component-icon">🌡️</div>
+                    <div class="component-title">DHT22 Sensor</div>
+                    <div class="component-desc">Temperature and humidity monitoring</div>
+                    <div class="component-tech">Analog Sensor</div>
+                </div>
+
+                <div class="component-card card-iot">
+                    <div class="component-icon">❤️</div>
+                    <div class="component-title">Pulse Sensor</div>
+                    <div class="component-desc">Heart rate monitoring for patient vitals</div>
+                    <div class="component-tech">Analog Sensor</div>
+                </div>
+
+                <div class="component-card card-iot">
+                    <div class="component-icon">🔗</div>
+                    <div class="component-title">Web Serial API</div>
+                    <div class="component-desc">Browser-to-device communication protocol</div>
+                    <div class="component-tech">JavaScript API</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                <span><strong>Frontend UI</strong> - User Interface Components</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #f093fb, #f5576c);"></div>
+                <span><strong>Backend/Logic</strong> - Processing & AI</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #fa709a, #fee140);"></div>
+                <span><strong>External APIs</strong> - Third-party Services</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #30cfd0, #330867);"></div>
+                <span><strong>Data Storage</strong> - Persistence Layer</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #ff6b6b, #ee5a6f);"></div>
+                <span><strong>IoT Components</strong> - Hardware Integration</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div
+            style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 2px solid #e2e8f0; color: #718096;">
+            <p style="font-size: 14px; margin-bottom: 5px;"><strong>Proteomorphic</strong> - AI-Based Protein Misfolding
+                Analysis Platform</p>
+            <p style="font-size: 12px;">Created by Sahana BM | November 2025</p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -37,10 +37,10 @@
         }
 
         .risk-meter {
-            height: 24px;
+            height: 32px;
             background: var(--bg-secondary);
-            border-radius: 12px;
-            overflow: hidden;
+            border-radius: 16px;
+            overflow: visible;
             position: relative;
         }
 
@@ -49,16 +49,23 @@
             background: linear-gradient(90deg, var(--accent-success), var(--accent-warning), var(--accent-danger));
             width: 0%;
             transition: width 1s ease-out;
+            border-radius: 16px;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .risk-indicator {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-weight: 600;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
             color: var(--text-primary);
-            text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+            z-index: 2;
         }
 
         .info-grid {
@@ -156,7 +163,7 @@
             <div class="card">
                 <h3 class="mb-md">Overall Misfolding Risk Score</h3>
                 <div class="risk-meter mb-md">
-                    <div class="risk-fill" style="width: 0%" id="riskFill"></div>
+                    <div class="risk-fill" id="riskFill"></div>
                     <div class="risk-indicator" id="riskScore">Calculating...</div>
                 </div>
                 <div class="flex gap-md">
@@ -181,30 +188,6 @@
                 <p class="text-tertiary mt-sm" style="font-size: var(--font-size-sm); text-align: center;">
                     Interactive: Rotate with mouse, scroll to zoom
                 </p>
-            </div>
-
-            <div class="card mb-lg">
-                <h3 class="mb-md">Secondary Structure Composition</h3>
-                <div class="info-grid">
-                    <div>
-                        <div class="flex justify-between mb-sm">
-                            <span>Alpha Helix</span>
-                            <strong class="text-gradient">--%</strong>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-sm">
-                            <span>Beta Sheet</span>
-                            <strong class="text-gradient">--%</strong>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="card">
@@ -264,10 +247,6 @@
                         </tbody>
                     </table>
                 </div>
-                <p class="text-secondary mt-md">
-                    <strong>Note:</strong> These guide RNAs are designed to target the mutant allele specifically.
-                    Validation in patient-derived iPSCs is recommended before clinical application.
-                </p>
             </div>
         </section>
 
@@ -283,7 +262,8 @@
     </div>
 
     <script src="../js/auth.js"></script>
-    <script src="../js/report-data-loader.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/report-data-loader.js?v=3"></script>
     <script>
         // Auth Check
         if (typeof Auth !== 'undefined') {
@@ -310,7 +290,17 @@
                 // Get protein name from local storage to pick PDB
                 let pdbId = '1AAP'; // Default
                 try {
-                    const data = JSON.parse(localStorage.getItem('currentAnalysis') || '{}');
+                    // Try to get from URL ID first
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const analysisId = urlParams.get('id');
+                    let data = {};
+
+                    if (analysisId && typeof ProjectManager !== 'undefined') {
+                        data = ProjectManager.getProject(analysisId) || {};
+                    } else {
+                        data = JSON.parse(localStorage.getItem('currentAnalysis') || '{}');
+                    }
+
                     const pName = (data.proteinName || '').toLowerCase();
 
                     for (const key in pdbMap) {

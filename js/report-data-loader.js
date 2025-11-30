@@ -1,17 +1,31 @@
-// COMPREHENSIVE REPORT DYNAMIC DATA LOADER
-// Loads analysis data and updates ALL report sections with protein-specific information
 
 (function loadAnalysisData() {
     try {
-        // Get stored analysis data
-        const storedAnalysis = localStorage.getItem('currentAnalysis');
+        // Get analysis ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const analysisId = urlParams.get('id');
 
-        if (!storedAnalysis) {
+        let analysisData = null;
+
+        if (analysisId && typeof ProjectManager !== 'undefined') {
+            analysisData = ProjectManager.getProject(analysisId);
+            console.log(`ℹ️ Loading analysis from ID: ${analysisId}`);
+        }
+
+        if (!analysisData) {
+            // Fallback to stored current analysis
+            const storedAnalysis = localStorage.getItem('currentAnalysis');
+            if (storedAnalysis) {
+                analysisData = JSON.parse(storedAnalysis);
+                console.log('ℹ️ Loading from currentAnalysis (fallback)');
+            }
+        }
+
+        if (!analysisData) {
             console.log('ℹ️ No analysis data found, using demo values');
             return;
         }
 
-        const analysisData = JSON.parse(storedAnalysis);
         console.log('✅ Loaded analysis data:', analysisData);
 
         // ========================================
@@ -41,14 +55,23 @@
         // Update Analysis Date
         const analysisDateEl = document.getElementById('analysisDate');
         if (analysisDateEl) {
-            if (analysisData.createdAt) {
-                const date = new Date(analysisData.createdAt);
-                analysisDateEl.textContent = date.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-            } else {
+            try {
+                if (analysisData.createdAt) {
+                    const date = new Date(analysisData.createdAt);
+                    if (!isNaN(date.getTime())) {
+                        analysisDateEl.textContent = date.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+                    } else {
+                        throw new Error('Invalid date');
+                    }
+                } else {
+                    throw new Error('No date provided');
+                }
+            } catch (e) {
+                console.warn('⚠️ Error formatting date:', e);
                 const now = new Date();
                 analysisDateEl.textContent = now.toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -59,16 +82,21 @@
         }
 
         // Update Risk Score
-        if (analysisData.misfoldingRisk !== undefined) {
-            const riskScoreEl = document.getElementById('riskScore');
-            const riskFillEl = document.getElementById('riskFill');
+        console.log('🔍 Updating Risk Score...');
+        const riskScoreVal = analysisData.misfoldingRisk ?? 0;
+        console.log('Risk Score Value:', riskScoreVal);
 
-            if (riskScoreEl) {
-                riskScoreEl.textContent = `${analysisData.misfoldingRisk}/100`;
-            }
-            if (riskFillEl) {
-                riskFillEl.style.width = `${analysisData.misfoldingRisk}%`;
-            }
+        const riskScoreEl = document.getElementById('riskScore');
+        const riskFillEl = document.getElementById('riskFill');
+
+        if (riskScoreEl) {
+            console.log('✅ riskScoreEl found');
+            riskScoreEl.textContent = `${riskScoreVal}/100`;
+        } else {
+            console.error('❌ riskScoreEl NOT found');
+        }
+        if (riskFillEl) {
+            riskFillEl.style.width = `${riskScoreVal}%`;
         }
 
         // Update Risk Level Badge
@@ -134,8 +162,12 @@
         // ========================================
         // 2. KEY FINDINGS (Dynamic Generation)
         // ========================================
-        const findingsList = document.querySelector('.findings-list');
+        console.log('🔍 Looking for findings list...');
+        const findingsList = document.querySelector('ul.findings-list');
+        console.log('Findings list element:', findingsList);
+
         if (findingsList) {
+            console.log('✅ Found findings list, updating...');
             let findingsHTML = '';
 
             // Finding 1: Structural Stability
@@ -170,6 +202,9 @@
             }
 
             findingsList.innerHTML = findingsHTML;
+            console.log('✅ Findings list updated with HTML:', findingsHTML);
+        } else {
+            console.error('❌ Findings list element NOT FOUND');
         }
 
         // ========================================
@@ -196,58 +231,31 @@
                 if (infoGrid) {
                     console.log('✅ Info grid found');
 
-                    // Alpha Helix - handle undefined, null, or 0
+                    // Alpha Helix
                     const alphaValue = analysisData.structure.alphaHelix ?? 0;
-                    const helixDiv = infoGrid.querySelector('div:nth-child(1)');
-                    if (helixDiv) {
-                        const helixText = helixDiv.querySelector('strong');
-                        const helixBar = helixDiv.querySelector('.progress-bar');
-                        if (helixText) {
-                            helixText.textContent = `${alphaValue}%`;
-                            console.log(`✅ Alpha Helix updated to: ${alphaValue}%`);
-                        } else {
-                            console.error('❌ Alpha Helix text element not found');
-                        }
-                        if (helixBar) {
-                            helixBar.style.width = `${alphaValue}%`;
-                            console.log(`✅ Alpha Helix bar width set to: ${alphaValue}%`);
-                        } else {
-                            console.error('❌ Alpha Helix progress bar not found');
-                        }
-                    } else {
-                        console.error('❌ Alpha Helix div not found');
-                    }
+                    const helixText = document.getElementById('alphaHelixText');
+                    const helixBar = document.getElementById('alphaHelixBar');
 
-                    // Beta Sheet - handle undefined, null, or 0
-                    const betaValue = analysisData.structure.betaSheet ?? 0;
-                    const sheetDiv = infoGrid.querySelector('div:nth-child(2)');
-                    if (sheetDiv) {
-                        const sheetText = sheetDiv.querySelector('strong');
-                        const sheetBar = sheetDiv.querySelector('.progress-bar');
-                        if (sheetText) {
-                            sheetText.textContent = `${betaValue}%`;
-                            console.log(`✅ Beta Sheet updated to: ${betaValue}%`);
-                        } else {
-                            console.error('❌ Beta Sheet text element not found');
-                        }
-                        if (sheetBar) {
-                            sheetBar.style.width = `${betaValue}%`;
-                            console.log(`✅ Beta Sheet bar width set to: ${betaValue}%`);
-                        } else {
-                            console.error('❌ Beta Sheet progress bar not found');
-                        }
-                    } else {
-                        console.error('❌ Beta Sheet div not found');
+                    if (helixText) {
+                        helixText.textContent = `${alphaValue}%`;
+                        console.log(`✅ Alpha Helix updated to: ${alphaValue}%`);
                     }
-                } else {
-                    console.error('❌ Info grid not found in structure card');
+                    if (helixBar) helixBar.style.width = `${alphaValue}%`;
+
+                    // Beta Sheet
+                    const betaValue = analysisData.structure.betaSheet ?? 0;
+                    const sheetText = document.getElementById('betaSheetText');
+                    const sheetBar = document.getElementById('betaSheetBar');
+
+                    if (sheetText) {
+                        sheetText.textContent = `${betaValue}%`;
+                        console.log(`✅ Beta Sheet updated to: ${betaValue}%`);
+                    }
+                    if (sheetBar) sheetBar.style.width = `${betaValue}%`;
                 }
-            } else {
-                console.error('❌ Structure card not found');
             }
         } else {
-            console.error('❌ No structure data available in analysisData');
-            console.log('Available keys:', Object.keys(analysisData));
+            console.error('❌ No structure data available');
         }
 
         // ========================================

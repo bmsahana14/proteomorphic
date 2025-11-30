@@ -121,7 +121,10 @@ class ProteomorphicChatbot {
                             <span>🏥</span>
                             <span>Health Assistant</span>
                         </h3>
-                        <button class="chatbot-close" id="chatbot-close">×</button>
+                        <div class="chatbot-actions">
+                            <button class="chatbot-clear" id="chatbot-clear" title="Clear Chat">🗑️</button>
+                            <button class="chatbot-close" id="chatbot-close" title="Close">×</button>
+                        </div>
                     </div>
                     
                     <div class="chatbot-messages" id="chatbot-messages"></div>
@@ -152,12 +155,14 @@ class ProteomorphicChatbot {
     attachEventListeners() {
         const toggleBtn = document.getElementById('chatbot-toggle');
         const closeBtn = document.getElementById('chatbot-close');
+        const clearBtn = document.getElementById('chatbot-clear');
         const sendBtn = document.getElementById('chatbot-send');
         const input = document.getElementById('chatbot-input');
         const suggestions = document.querySelectorAll('.chatbot-suggestion');
 
         toggleBtn.addEventListener('click', () => this.toggleChat());
         closeBtn.addEventListener('click', () => this.closeChat());
+        clearBtn.addEventListener('click', () => this.clearChat());
         sendBtn.addEventListener('click', () => this.sendMessage());
 
         input.addEventListener('keypress', (e) => {
@@ -198,6 +203,13 @@ class ProteomorphicChatbot {
         document.getElementById('chatbot-window').classList.remove('active');
         document.getElementById('chatbot-toggle').classList.remove('active');
         document.getElementById('chatbot-toggle').textContent = '💬';
+    }
+
+    clearChat() {
+        const messagesContainer = document.getElementById('chatbot-messages');
+        messagesContainer.innerHTML = '';
+        this.messages = [];
+        this.addWelcomeMessage();
     }
 
     addWelcomeMessage() {
