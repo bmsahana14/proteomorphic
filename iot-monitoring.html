@@ -178,6 +178,17 @@
             <p class="text-secondary" id="patientStatus">Connecting to sensors...</p>
             <p style="margin-top: 8px; font-size: 0.875rem; color: var(--accent-cyan);">💡 Simulated data updates every
                 3 seconds</p>
+            <div
+                style="margin-top: 12px; padding: 12px; background: var(--bg-secondary); border-radius: var(--radius-md); border-left: 3px solid var(--accent);">
+                <strong style="font-size: 0.875rem;">🧪 Test Different Risk Levels:</strong>
+                <div style="margin-top: 8px; font-size: 0.8rem; line-height: 1.6;">
+                    <a href="?risk=low" style="color: #10b981; text-decoration: underline; margin-right: 12px;">Low Risk
+                        Patient</a>
+                    <a href="?risk=medium"
+                        style="color: #f59e0b; text-decoration: underline; margin-right: 12px;">Medium Risk Patient</a>
+                    <a href="?risk=high" style="color: #ef4444; text-decoration: underline;">High Risk Patient</a>
+                </div>
+            </div>
         </div>
 
         <!-- Risk Indicator -->
@@ -318,19 +329,41 @@
             }
         };
 
-        // Get patient ID from URL or use default
+
+        // Get patient ID and risk level from URL or use default
         const urlParams = new URLSearchParams(window.location.search);
         let patientId = urlParams.get('patient') || localStorage.getItem('currentPatientId');
+        let riskLevel = urlParams.get('risk'); // Can be 'low', 'medium', or 'high'
 
-        // Determine patient profile based on ID or random
+        // Determine patient profile based on URL parameter, ID, or random
         let profile;
 
-        if (!patientId) {
-            // Random patient
+        if (riskLevel) {
+            // Use URL parameter to select profile
+            if (riskLevel.toLowerCase() === 'low' || riskLevel.toLowerCase() === 'normal') {
+                profile = patientProfiles['normal'];
+                patientId = patientId || 'P' + Math.floor(Math.random() * 4); // 0-3
+            } else if (riskLevel.toLowerCase() === 'medium' || riskLevel.toLowerCase() === 'moderate') {
+                profile = patientProfiles['moderate'];
+                patientId = patientId || 'P' + (Math.floor(Math.random() * 4) + 4); // 4-7
+            } else if (riskLevel.toLowerCase() === 'high' || riskLevel.toLowerCase() === 'critical') {
+                profile = patientProfiles['critical'];
+                patientId = patientId || 'P' + (Math.floor(Math.random() * 2) + 8); // 8-9
+            }
+        } else if (!patientId) {
+            // Random patient with equal distribution
             const profiles = ['normal', 'moderate', 'critical'];
             const randomProfile = profiles[Math.floor(Math.random() * profiles.length)];
             profile = patientProfiles[randomProfile];
-            patientId = 'P' + Math.floor(Math.random() * 90000 + 10000);
+
+            // Generate patient ID based on profile
+            if (randomProfile === 'normal') {
+                patientId = 'P' + Math.floor(Math.random() * 40000 + 10000); // Ends in 0-3 (40%)
+            } else if (randomProfile === 'moderate') {
+                patientId = 'P' + Math.floor(Math.random() * 40000 + 50000); // Ends in 4-7 (40%)
+            } else {
+                patientId = 'P' + Math.floor(Math.random() * 20000 + 80000); // Ends in 8-9 (20%)
+            }
         } else {
             // Determine profile from patient ID
             const lastDigit = parseInt(patientId.slice(-1));
@@ -347,6 +380,7 @@
         // Update patient info
         document.getElementById('patientId').textContent = patientId + ' (' + profile.name + ')';
         document.getElementById('patientStatus').textContent = profile.status;
+
 
         // Generate realistic varying sensor values
         function updateSensors() {
@@ -374,54 +408,97 @@
         }
 
         function calculateRisk(temp, hr, ph, bpSys, bpDia) {
-            let risk = 50; // Base risk
+            // Start with a low baseline risk (15-35% depending on patient profile)
+            let baseRisk = 15; // Healthy baseline
+
+            // Adjust baseline based on overall patient profile
+            if (profile.name.includes('High Risk')) {
+                baseRisk = 35;
+            } else if (profile.name.includes('Moderate')) {
+                baseRisk = 25;
+            }
+
+            let risk = baseRisk;
             let factors = [];
 
-            // Temperature factor
+            // Temperature factor (Normal: 36.5-37.5°C)
             if (temp > 37.5) {
-                const increase = Math.round((temp - 37.5) * 15);
+                const increase = Math.round((temp - 37.5) * 20);
                 risk += increase;
                 factors.push(`🌡️ Elevated temperature (${temp}°C) +${increase}%`);
-            }
-
-            // pH factor
-            if (ph < 7.3 || ph > 7.5) {
-                risk += 20;
-                factors.push(`🧪 pH outside optimal range (${ph}) +20%`);
-            }
-
-            // Heart rate factor
-            if (hr > 90) {
-                const increase = Math.round((hr - 90) / 2);
+            } else if (temp < 36.5) {
+                const increase = Math.round((36.5 - temp) * 15);
                 risk += increase;
-                factors.push(`💓 Elevated stress markers (${hr} BPM) +${increase}%`);
+                factors.push(`🌡️ Low temperature (${temp}°C) +${increase}%`);
             }
 
-            // Blood pressure factor
+            // pH factor (Normal: 7.35-7.45)
+            if (ph < 7.35) {
+                const increase = Math.round((7.35 - ph) * 100);
+                risk += increase;
+                factors.push(`🧪 Acidic pH (${ph}) +${increase}%`);
+            } else if (ph > 7.45) {
+                const increase = Math.round((ph - 7.45) * 100);
+                risk += increase;
+                factors.push(`🧪 Alkaline pH (${ph}) +${increase}%`);
+            }
+
+            // Heart rate factor (Normal: 60-100 BPM)
+            if (hr > 100) {
+                const increase = Math.round((hr - 100) * 0.5);
+                risk += increase;
+                factors.push(`💓 Elevated heart rate (${hr} BPM) +${increase}%`);
+            } else if (hr < 60) {
+                const increase = Math.round((60 - hr) * 0.3);
+                risk += increase;
+                factors.push(`💓 Low heart rate (${hr} BPM) +${increase}%`);
+            }
+
+            // Blood pressure factor (Normal: <120/80)
             if (bpSys > 140 || bpDia > 90) {
-                risk += 10;
-                factors.push(`💉 High blood pressure (${bpSys}/${bpDia}) +10%`);
+                const increase = 15;
+                risk += increase;
+                factors.push(`💉 High blood pressure (${bpSys}/${bpDia}) +${increase}%`);
+            } else if (bpSys > 130 || bpDia > 85) {
+                const increase = 8;
+                risk += increase;
+                factors.push(`💉 Elevated blood pressure (${bpSys}/${bpDia}) +${increase}%`);
             }
 
-            // Cap at 100%
-            risk = Math.min(risk, 100);
+            // Oxidative stress marker (simulated based on combined factors)
+            if (factors.length >= 3) {
+                risk += 10;
+                factors.push(`⚠️ Multiple abnormal parameters +10%`);
+            }
+
+            // Cap at 100%, floor at baseline
+            risk = Math.min(Math.max(risk, baseRisk), 100);
 
             // Update display
             const riskValueEl = document.getElementById('riskValue');
             riskValueEl.textContent = risk + '%';
 
-            // Update color
-            riskValueEl.className = 'risk-value ' + (risk > 80 ? 'risk-high' : risk > 60 ? 'risk-medium' : 'risk-low');
+            // Update color based on risk level
+            riskValueEl.className = 'risk-value ' + (risk >= 70 ? 'risk-high' : risk >= 45 ? 'risk-medium' : 'risk-low');
 
-            // Update level text
-            const levelText = risk > 80 ? '🔴 HIGH RISK - Immediate intervention recommended' : risk > 60 ? '🟡 MEDIUM RISK - Monitor closely' : '🟢 LOW RISK - All parameters normal';
+            // Update level text with more detailed descriptions
+            let levelText;
+            if (risk >= 70) {
+                levelText = '🔴 HIGH RISK - Immediate intervention recommended';
+            } else if (risk >= 45) {
+                levelText = '🟡 MEDIUM RISK - Monitor closely and consider preventive measures';
+            } else if (risk >= 30) {
+                levelText = '🟠 ELEVATED RISK - Continue monitoring';
+            } else {
+                levelText = '🟢 LOW RISK - All parameters within acceptable range';
+            }
             document.getElementById('riskLevel').textContent = levelText;
 
             // Update factors
             if (factors.length > 0) {
                 document.getElementById('riskFactors').innerHTML = factors.join('<br>');
             } else {
-                document.getElementById('riskFactors').textContent = '✅ All parameters within normal range';
+                document.getElementById('riskFactors').textContent = '✅ All vital signs within normal range - Baseline risk only';
             }
         }
 

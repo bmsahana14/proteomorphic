@@ -121,7 +121,8 @@
                 <li><a href="../knowledge.html" class="navbar-link">Knowledge Center</a></li>
             </ul>
             <div class="flex gap-sm">
-                <button onclick="window.print()" class="btn btn-secondary btn-sm">Print</button>
+                <button onclick="downloadReportAsPDF()" class="btn btn-primary btn-sm">📥 Download PDF</button>
+                <button onclick="window.print()" class="btn btn-secondary btn-sm">🖨️ Print</button>
                 <button onclick="window.location.href='../dashboard/index.html'" class="btn btn-secondary btn-sm">Back
                     to Dashboard</button>
             </div>
@@ -318,6 +319,30 @@
                 });
             }
         });
+    </script>
+
+    <script>
+        // PDF Download Function
+        function downloadReportAsPDF() {
+            // Get protein name for filename suggestion
+            const proteinName = document.getElementById('proteinName')?.textContent || 'Protein';
+            const reportDate = new Date().toISOString().split('T')[0];
+
+            // Show loading message
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating PDF...';
+            btn.disabled = true;
+
+            // Use browser's print dialog (user can save as PDF)
+            setTimeout(() => {
+                window.print();
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, 1000);
+            }, 300);
+        }
     </script>
 </body>
 

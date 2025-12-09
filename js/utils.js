@@ -418,15 +418,26 @@ const AnalysisEngine = {
             'catalase', 'superoxide dismutase', 'peroxidase', 'kinase',
             'phosphatase', 'dehydrogenase', 'synthase', 'lyase',
 
-            // Neuroprotective proteins
-            'parkin', 'pink1', 'dj-1', 'uchl1', 'nurr1'
+            // Neuroprotective proteins (removed parkin - can be disease-causing when mutated)
+            'pink1', 'dj-1', 'uchl1', 'nurr1'
         ];
 
         // List of DISEASE-ASSOCIATED proteins (should have HIGH risk)
         const diseaseProteins = [
-            'amyloid', 'app', 'tau', 'mapt', 'synuclein', 'snca',
-            'huntingtin', 'htt', 'prion', 'prp', 'sod1', 'tdp-43',
-            'fus', 'ataxin', 'polyglutamine', 'cftr', 'brca', 'tp53'
+            // Alzheimer's
+            'amyloid', 'app', 'tau', 'mapt', 'psen', 'presenilin',
+            // Parkinson's
+            'synuclein', 'alpha-synuclein', 'α-synuclein', 'snca', 'lrrk2', 'parkin', 'park', 'parkinson',
+            // Huntington's
+            'huntingtin', 'htt',
+            // Prion diseases
+            'prion', 'prp', 'prnp',
+            // ALS
+            'sod1', 'tdp-43', 'tdp43', 'fus', 'c9orf72',
+            // Other neurodegenerative
+            'ataxin', 'polyglutamine', 'polyq',
+            // Other diseases
+            'cftr', 'brca', 'tp53', 'p53'
         ];
 
         // Check if protein is healthy/supplement
